@@ -1,0 +1,245 @@
+
+
+<?php
+/*
+  Use subclasses (models) like so:
+  
+  #Create a model object:
+  $toaster = new KitchenAppliance(array("name" => "toaster"));
+  $toaster->save(); // persists to database
+  
+  #Find a model object:
+  $toaster = KitchenAppliance::find(34); // retrieves from database
+  
+  #Update attributes of a model object:
+  $toaster->attributes(array("size" => "small"))
+  
+  #Persist the changes to the database:
+  $toaster->save();
+  
+  #Access attribute
+  $toaster->attr("name") // returns "toaster"
+*/
+
+  class BaseModel{
+
+    public static $table_name = "base";
+    public static $default_order = "id";
+    protected static $db_conn;
+    protected $id = null;
+    protected $attributes;
+  
+    function __construct($attributes = null){
+      if(isset($attributes["id"])){
+        $this->id = $attributes["id"];
+        unset($attributes["id"]);
+      }
+      $this->attributes($attributes);
+    }
+    
+    public static function find($id){
+      $table = static::$table_name;
+      $conn = self::get_conn();
+      $result = $conn->query("select * from $table where id = " . intval($id));
+      if($result){
+        $u = new static($result->getNext());
+        return($u);
+      }else{
+        throw new Exception($conn->getError());
+      }
+    }
+    
+    public static function find_all(){
+      
+    }
+    
+    public static function find_by($attributes){
+      $conditions = array();
+      foreach($attributes as $key => $val){
+        $conditions[] = "$key = '" . addslashes($val) . "'";
+      }
+      $condition_string = implode(" AND ", $conditions);
+      $conn = self::get_conn();
+      $table = static::$table_name;
+      $query = "select * from $table where $condition_string order by " . static::$default_order;
+      $result = $conn->query($query);
+      $objects = array();
+      while($row = $result->getNext()){
+        $objects[] = new static($row);
+      }
+      return $objects;
+    }
+    
+    
+    function id(){
+      return $this->id;
+    }
+    
+    /*
+      $model->attributes( $array_of_attributes )
+      Pass an $array_of_attributes to update those attributes on the model, or
+      pass nothing to just return the attributes on the model
+    */
+    function attributes($attributes = null){
+      if(is_array($attributes)){
+        foreach($attributes as $k => $v){
+          $this->attributes[$k] = $v;
+        }
+      }
+      return $this->attributes;
+    }
+
+
+    /*
+      $model->attr( $attribute, $new_value )
+      If a $new_value is passed, the model's value of that attribute is updated.
+      Returns the old, or new, attribute value
+    */
+    function attr($attribute, $new_value = null){
+      if($new_value){
+        $this->attributes[$attribute] = $new_value;
+      }
+      return($this->attributes[$attribute]);
+    }
+    
+    /*
+      $model->save($attributes)
+      If an $attributes array is passed, those _specific_ values are persisted to the database.
+      Otherwise, it persists all the object's stored $attributes
+    */
+    function save($attributes = null){
+      if(isset($this) && $this->id){
+        return $this->_update($attributes);
+      }else{
+        if(isset($this)){
+          return $this->_create($attributes);
+        }else{
+          return static::create($attributes);
+        }
+      }
+    }
+    
+    protected function _update($attributes = null){
+      if(!$attributes){
+        $attributes = $this->attributes;
+      }
+
+      // avoid double escape of quotes
+      if(get_magic_quotes_gpc()) {
+        foreach($attributes as $key => $value){
+          $attributes[$key] = stripslashes($value);
+        }
+      }
+
+      $table = static::$table_name;
+      $set_list = $this->keyvals_to_sql_hash($attributes);
+      $query = "update $table set $set_list where id = " . $this->id;
+
+      $conn = self::get_conn();
+      $result = $conn->query($query);
+
+      if($result){
+        return($result);
+      }else{
+        throw new Exception($conn->getError());
+      }
+    }
+    
+    protected static function create($attributes){
+      $query = static::prepare_insert_statement($attributes);
+      $conn = self::get_conn();
+      $result = $conn->query($query);
+
+      if($result){
+        $new_id = $conn->last_id();
+        return static::find($new_id);
+      }else{
+        throw new Exception($conn->getError());
+      }
+    }
+    
+    protected function _create($attributes = null){
+      if(!$attributes){
+        $attributes = $this->attributes;
+      }
+      $query = static::prepare_insert_statement($attributes);
+      $conn = self::get_conn();
+      $result = $conn->query($query);
+
+      if($result){
+        $new_id = $conn->last_id();
+        $this->id = $new_id;
+        return static::find($new_id);
+      }else{
+        throw new Exception($conn->getError());
+      }
+    }
+    
+    function delete(){
+      if($this->is_persisted()){
+        $table = static::$table_name;
+        $query = "delete from $table where id = " . $this->id();
+        $conn = self::get_conn();
+        $result = $conn->query($query);
+      }
+    }
+    
+    function is_persisted(){
+      return $this->id();
+    }
+    
+    /*
+      $user->toString()
+      returns a string representation of the model
+    */
+    function toString(){
+      $str = "" . static::$table_name . "(". $this->id ."): [";
+      foreach($this->attributes as $k => $v){
+        $str .= "$k: \"".$v."\", ";
+      }
+      $str = substr($str, 0, strlen($str)-2) . "]";
+      return $str;
+    }
+    
+    protected static function prepare_insert_statement($attributes){
+      $table = static::$table_name;
+      $keys = implode(", ", array_keys($attributes));
+
+      // avoid double escape of quotes
+      if(get_magic_quotes_gpc()) {
+        foreach($attributes as $key => $value){
+          $attributes[$key] = stripslashes($value);
+        }
+      }
+
+      $value_wrapper = function($value) {
+        return "'" . addslashes($value) . "'";
+      };
+      $values = implode(", ", array_map($value_wrapper, array_values($attributes)));
+      $query = "insert into $table($keys) values($values)";
+      
+      return $query;
+    }
+    
+    protected function keyvals_to_sql_hash($attributes){
+      $set_list = "";
+      foreach($attributes as $key => $value){
+        $set_list .= "$key = '" . addslashes($value) . "', ";
+      }
+      return(substr($set_list, 0, strlen($set_list)-2));
+    }
+    
+    protected static function get_conn(){
+      if(!self::$db_conn){
+        global $APP_CONF;
+        $host     = $APP_CONF["DB"]["host"];
+        $database = $APP_CONF["DB"]["database"];
+        $user     = $APP_CONF["DB"]["user"];
+        $password = $APP_CONF["DB"]["password"];
+        self::$db_conn = new DBConnection($host, $user, $password, $database);
+      }
+      return self::$db_conn;
+    }
+  
+  }
+?>
