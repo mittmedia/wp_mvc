@@ -17,7 +17,7 @@ namespace WpMvc
       include( $partial_path );
     }
 
-    public static function render_template( $path )
+    public static function render_template( $path, $template_object )
     {
       $template_path_splitted = explode( '/', $path );
       $template_name = array_pop( $template_path_splitted ) . '.php';
