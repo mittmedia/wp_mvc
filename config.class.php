@@ -4,12 +4,19 @@ namespace WpMvc
 {
   class Config
   {
-    private $plugin_dir;
-    public function set_plugin_dir( $val ) { $this->plugin_dir = $val; }
-    public function get_plugin_dir() { return $this->plugin_dir; }
+    public $home_path;
+    public function home_path( $val = null )
+    {
+      if ( $val != null ) {
+        $path = realpath( $val );
 
-    private $plugin_name;
-    public function set_plugin_name( $val ) { $this->plugin_name = $val; }
-    public function get_plugin_name() { return $this->plugin_name; }
+        if ( ! is_dir( $path ) )
+          trigger_error( "You didn't specify a real path for your app.", E_USER_NOTICE );
+
+        $this->home_path = $path;
+      }
+
+      return $this->home_path;
+    }
   }
 }

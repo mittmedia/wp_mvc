@@ -1,6 +1,9 @@
 <?php
 
-class BaseController
+namespace WpMvc
 {
-  
+  class BaseController
+  {
+    
+  }
 }
