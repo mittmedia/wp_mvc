@@ -14,8 +14,8 @@ How to use
 
 Load it up, fill it with config values and init()! (Please note the plugin name must be the same as the plugin folders name)
 
-    require_once( "wp_mvc/init.php" );
+    require_once( 'wp_mvc/init.php' );
 
     $app = new \WpMvc\Application();
-    $app->config->home_path( WP_PLUGIN_DIR . "/theme_stats" );
+    $app->config->home_path( WP_PLUGIN_DIR . '/theme_stats' );
     $app->init();
