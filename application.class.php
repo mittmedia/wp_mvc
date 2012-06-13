@@ -4,24 +4,12 @@ namespace WpMvc
 {
   class Application
   {
-    public $config;
-
-    public function __construct()
-    {
-      $this->config = new \WpMvc\Config();
-    }
-
     public function init()
     {
-      $home_path = $this->config->home_path;
+      $home_path = \WpMvc\Config::$home_path;
 
       $this->init_controllers( $home_path . "/controllers" );
       $this->init_models( $home_path . "/models" );
-    }
-
-    public function controller(  )
-    {
-      $this->config = new \WpMvc\Controller();
     }
 
     private function init_controllers( $path )
@@ -59,14 +47,14 @@ namespace WpMvc
           $controller_file_name = basename( $path );
           $controller_name = preg_replace( "/\.php/", "", $controller_file_name );
 
-          $class_name = $this->rename_controller_file_to_class( $controller_name );
+          $class_name = static::rename_controller_file_to_class( $controller_name );
 
           $this->{$controller_name} = new $class_name();
         }
       }
     }
 
-    private function rename_controller_file_to_class( $controller_name )
+    public static function rename_controller_file_to_class( $controller_name )
     {
       $class_name_splitted = explode( "_", $controller_name );
 
@@ -80,6 +68,24 @@ namespace WpMvc
       //$class_name = ucfirst( $class_name );
 
       return $class_name;
+    }
+
+    public static function rename_controller_class_to_file( $class_name )
+    {
+      $class_name_with_spaces = preg_replace( "/([a-z0-9])?([A-Z])/", "$1 $2", $class_name);
+
+      $class_name_splitted = explode( " ", $class_name_with_spaces );
+
+      $controller_name = "";
+
+      foreach ( $class_name_splitted as $class_name_part ) {
+        $controller_name .= "_" . strtolower( $class_name_part );
+      }
+
+      //$class_name = preg_replace( "/_?/e", "$1", $controller_name );
+      //$class_name = ucfirst( $class_name );
+
+      return substr( $controller_name, 2 );
     }
   }
 }
