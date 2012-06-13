@@ -4,40 +4,43 @@ namespace WpMvc
 {
   class BaseModel
   {
-    protected $id = null;
-    protected $attributes;
+    protected $object;
+    public static $table_name;
+    public static $class_name;
 
-    public function __construct( $attributes = null )
-    {
-      if ( isset( $attributes["id"] ) ) {
-        $this->id = $attributes["id"];
-        unset( $attributes["id"] );
-      }
-
-      //$this->attributes( $attributes );
-    }
-
-    public function find( $id )
+    public static function find( $id )
     {
       global $wpdb;
 
-      $user = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $wpdb->users WHERE id = %s;", $id ) );
+      $table = static::$table_name;
+      $class = static::$class_name;
 
-      return $user[0];
+      $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE id = %s;", $id ) );
+
+      if ( $results ) {
+        $return_user = new $class();
+        $return_user->object = $results[0];
+        return $return_user;
+      }
+
+      return false;
     }
 
-    /*public static function find( $id )
+    public function attr( $name, $value = null )
     {
-      $table = static::$table_name;
+      foreach ( $this->object as $obj_key => $obj_value ) {
+        if ( $obj_key == $name ) {
+          if ( $value )
+            $this->object->{$obj_key} = $value;
 
-      $result = $wpdb->select( $wpdb->prepare("select * from $table where id = " . intval( $id ) ) );
-      
-      if ( $result ) {
-        $u = new static($result->getNext());
-        return($u);
-      } else {
-        throw new Exception($conn->getError());
+          return $obj_value;
+        }
       }
-    }*/
+    }
+
+    public function save()
+    {
+      
+    }
   }
 }
