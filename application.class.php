@@ -8,8 +8,9 @@ namespace WpMvc
     {
       $home_path = \WpMvc\Config::$home_path;
 
-      $this->init_controllers( $home_path . "/controllers" );
-      $this->init_models( $home_path . "/models" );
+      $this->init_controllers( $home_path . '/controllers' );
+      $this->init_helpers( $home_path . '/helpers' );
+      $this->init_models( $home_path . '/models' );
     }
 
     private function init_controllers( $path )
@@ -17,6 +18,12 @@ namespace WpMvc
       $controller_iterator = $this->create_dir_iterator( $path );
       $this->iterate_dir_and_include( $controller_iterator );
       $this->iterate_dir_and_init( $controller_iterator );
+    }
+
+    private function init_helpers( $path )
+    {
+      $helper_iterator = $this->create_dir_iterator( $path );
+      $this->iterate_dir_and_include( $helper_iterator );
     }
 
     private function init_models( $path )
@@ -45,7 +52,7 @@ namespace WpMvc
       foreach ($iterator as $path) {
         if ( ! $path->isDir() ) {
           $controller_file_name = basename( $path );
-          $controller_name = preg_replace( "/\.php/", "", $controller_file_name );
+          $controller_name = preg_replace( '/\.php/', '', $controller_file_name );
 
           $class_name = static::rename_controller_file_to_class( $controller_name );
 
@@ -56,34 +63,28 @@ namespace WpMvc
 
     public static function rename_controller_file_to_class( $controller_name )
     {
-      $class_name_splitted = explode( "_", $controller_name );
+      $class_name_splitted = explode( '_', $controller_name );
 
-      $class_name = "";
+      $class_name = '';
 
       foreach ( $class_name_splitted as $class_name_part ) {
         $class_name .= ucfirst( $class_name_part );
       }
-
-      //$class_name = preg_replace( "/_?/e", "$1", $controller_name );
-      //$class_name = ucfirst( $class_name );
 
       return $class_name;
     }
 
     public static function rename_controller_class_to_file( $class_name )
     {
-      $class_name_with_spaces = preg_replace( "/([a-z0-9])?([A-Z])/", "$1 $2", $class_name);
+      $class_name_with_spaces = preg_replace( '/([a-z0-9])?([A-Z])/', '$1 $2', $class_name);
 
-      $class_name_splitted = explode( " ", $class_name_with_spaces );
+      $class_name_splitted = explode( ' ', $class_name_with_spaces );
 
-      $controller_name = "";
+      $controller_name = '';
 
       foreach ( $class_name_splitted as $class_name_part ) {
-        $controller_name .= "_" . strtolower( $class_name_part );
+        $controller_name .= '_' . strtolower( $class_name_part );
       }
-
-      //$class_name = preg_replace( "/_?/e", "$1", $controller_name );
-      //$class_name = ucfirst( $class_name );
 
       return substr( $controller_name, 2 );
     }
