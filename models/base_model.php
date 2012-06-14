@@ -4,10 +4,10 @@ namespace WpMvc
 {
   class BaseModel
   {
-    public static $table_name;
-    public static $class_name;
-    public static $id_column;
-    protected static $db_columns;
+    public $table_name;
+    public $class_name;
+    public $id_column;
+    protected $db_columns;
 
     public function __construct()
     {
@@ -18,8 +18,8 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $class = static::$class_name;
+      $table = $this->table_name;
+      $class = $this->class_name;
 
       $results = $wpdb->get_results( "SELECT * FROM $table;" );
 
@@ -42,9 +42,9 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $id_column = static::$id_column;
-      $class = static::$class_name;
+      $table = $this->table_name;
+      $id_column = $this->id_column;
+      $class = $this->class_name;
 
       $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE $id_column = %s LIMIT 1;", $id ) );
 
@@ -65,8 +65,8 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $class = static::$class_name;
+      $table = $this->table_name;
+      $class = $this->class_name;
 
       $results = $wpdb->get_results( $query );
 
@@ -89,7 +89,7 @@ namespace WpMvc
 
     public static function virgin()
     {
-      $class = static::$class_name;
+      $class = $this->class_name;
 
       $return_object = new $class();
 
@@ -104,7 +104,7 @@ namespace WpMvc
 
     public function save()
     {
-      $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
+      $this->{$this->id_column} ? $id = $this->update() : $id = $this->create();
     
       return $id;
     }
@@ -113,12 +113,12 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $class = strtolower( static::$class_name );
+      $table = $this->table_name;
+      $class = strtolower( $this->class_name );
 
       $results = $wpdb->get_results( "SHOW COLUMNS FROM $table;" );
 
-      static::$db_columns = $results;
+      $this->db_columns = $results;
 
       foreach ( $results as $result ) {
         if ( ! property_exists( $this, $result->Field ) ) {
@@ -135,12 +135,6 @@ namespace WpMvc
 
     protected function populate_sub_class( $each_object_array, $each_object )
     {
-      //echo '<pre>';
-      //var_dump( $object );
-      //echo '</pre>';
-
-      //$each_object_array = $object;
-
       foreach ( $each_object_array as $each_object_item ) {
         $each_object->{$each_object_item->option_name} = $each_object_item;
       }
@@ -156,8 +150,8 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $class = strtolower( static::$class_name );
+      $table = $this->table_name;
+      $class = strtolower( $this->class_name );
 
       $wpdb->insert( $table, $this->as_db_array(), array() );
 
@@ -168,15 +162,15 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $class = strtolower( static::$class_name );
-      $id = $this->{static::$id_column};
+      $table = $this->table_name;
+      $class = strtolower( $this->class_name );
+      $id = $this->{$this->id_column};
 
       $wpdb->update(
         $table,
         $this->as_db_array(),
         array(
-          static::$id_column => $id
+          $this->id_column => $id
         ), 
         array(), 
         array() 
@@ -189,7 +183,7 @@ namespace WpMvc
     {
       $return_array = array();
 
-      foreach ( static::$db_columns as $db_column ) {
+      foreach ( $this->db_columns as $db_column ) {
         if ( $this->{$db_column->Field} || $this->{$db_column->Field} == 0 ) {
           $return_array[$db_column->Field] = $this->{$db_column->Field};
         }
