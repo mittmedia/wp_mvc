@@ -8,6 +8,6 @@ class User extends \WpMvc\BaseModel
 
   public function user_meta( $key )
   {
-    return \UserMeta::find_by_user_id_and_key( $this->{static::$id_column}, $key );
+    return \UserMeta::find_by_user_id_and_key( $this->{$this->id_column}, $key );
   }
 }

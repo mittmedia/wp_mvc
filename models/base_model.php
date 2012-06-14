@@ -4,9 +4,9 @@ namespace WpMvc
 {
   class BaseModel
   {
-    public $table_name;
-    public $class_name;
-    public $id_column;
+    public static $table_name;
+    public static $class_name;
+    public static $id_column;
     protected $db_columns;
 
     public function __construct()
@@ -42,9 +42,9 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = $this->table_name;
-      $id_column = $this->id_column;
-      $class = $this->class_name;
+      $table = static::$table_name;
+      $id_column = static::$id_column;
+      $class = static::$class_name;
 
       $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE $id_column = %s LIMIT 1;", $id ) );
 
@@ -65,8 +65,8 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = $this->table_name;
-      $class = $this->class_name;
+      $table = static::$table_name;
+      $class = static::$class_name;
 
       $results = $wpdb->get_results( $query );
 
@@ -104,7 +104,7 @@ namespace WpMvc
 
     public function save()
     {
-      $this->{$this->id_column} ? $id = $this->update() : $id = $this->create();
+      $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
     
       return $id;
     }
@@ -113,8 +113,8 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = $this->table_name;
-      $class = strtolower( $this->class_name );
+      $table = static::$table_name;
+      $class = strtolower( static::$class_name );
 
       $results = $wpdb->get_results( "SHOW COLUMNS FROM $table;" );
 
@@ -162,15 +162,15 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = $this->table_name;
-      $class = strtolower( $this->class_name );
-      $id = $this->{$this->id_column};
+      $table = static::$table_name;
+      $class = strtolower( static::$class_name );
+      $id = $this->{static::$id_column};
 
       $wpdb->update(
         $table,
         $this->as_db_array(),
         array(
-          $this->id_column => $id
+          static::$id_column => $id
         ), 
         array(), 
         array() 

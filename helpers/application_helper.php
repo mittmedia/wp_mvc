@@ -31,10 +31,5 @@ namespace WpMvc
 
       return substr( $controller_name, 2 );
     }
-    
-    public static function get_class_name_without_namespace( $class )
-    {
-      
-    }
   }
 }
