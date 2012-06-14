@@ -18,8 +18,8 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = $this->table_name;
-      $class = $this->class_name;
+      $table = static::$table_name;
+      $class = static::$class_name;
 
       $results = $wpdb->get_results( "SELECT * FROM $table;" );
 
