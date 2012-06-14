@@ -11,7 +11,7 @@ namespace WpMvc
         $path = realpath( $val );
 
         if ( ! is_dir( $path ) )
-          trigger_error( "You didn't specify a real path for your app.", E_WARNING );
+          trigger_error( "You didn't specify a real path for your app.", E_USER_ERROR );
 
         static::$home_path = $path;
       }

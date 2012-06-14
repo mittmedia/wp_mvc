@@ -4,11 +4,15 @@ namespace WpMvc
 {
   class BaseModel
   {
-    protected $object;
-    public static $id;
     public static $table_name;
     public static $class_name;
     public static $id_column;
+    protected static $db_columns;
+
+    public function __construct()
+    {
+      $this->populate();
+    }
 
     public static function all()
     {
@@ -19,16 +23,19 @@ namespace WpMvc
 
       $results = $wpdb->get_results( "SELECT * FROM $table;" );
 
-      $all_users = array();
+      $all = array();
 
       foreach ( $results as $result ) {
-        $return_user = new $class();
-        $return_user->object = $result;
+        $return_object = new $class();
+        
+        $return_object->populate_fields( $result, $return_object );
 
-        array_push( $all_users, $return_user );
+        $return_object->class_init();
+
+        array_push( $all, $return_object );
       }
-      
-      return $all_users;
+
+      return $all;
     }
 
     public static function find( $id )
@@ -36,58 +43,113 @@ namespace WpMvc
       global $wpdb;
 
       $table = static::$table_name;
+      $id_column = static::$id_column;
       $class = static::$class_name;
 
-      $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE id = %s;", $id ) );
+      $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE $id_column = %s LIMIT 1;", $id ) );
 
-      $return_user = new $class();
+      $return_object = new $class();
 
       if ( $results ) {
-        $return_user->object = $results[0];
+        $return_object->populate_fields( $results[0], $return_object );
+      } else {
+        trigger_error( "Couldn't find $id_column $id of $class in $table.", E_USER_ERROR );
       }
 
-      return $return_user;
+      $return_object->class_init();
+
+      return $return_object;
+    }
+
+    public static function query( $query )
+    {
+      global $wpdb;
+
+      $table = static::$table_name;
+      $class = static::$class_name;
+
+      $results = $wpdb->get_results( $query );
+
+      $all = array();
+
+      if ( $results ) {
+        foreach ( $results as $result ) {
+          $return_object = new $class();
+          
+          $return_object->populate_fields( $result, $return_object );
+
+          array_push( $all, $return_object );
+        }
+      } else {
+        trigger_error( "Nothing found on \"$query\".", E_USER_ERROR );
+      }
+      
+      return $all;
     }
 
     public static function virgin()
     {
       $class = static::$class_name;
 
-      $return_user = new $class();
-      $return_user->object = $return_user;
-      return $return_user;
+      $return_object = new $class();
+
+      return $return_object;
     }
 
-    public static function brand_new()
+    public function takes_post( $post )
     {
-      $class = static::$class_name;
-
-      $return_user = new $class();
-      $return_user->object = $return_user;
-      return $return_user;
-    }
-
-    public function attr( $name, $value = null )
-    {
-      foreach ( $this->object as $obj_key => $obj_value ) {
-        if ( $obj_key == $name ) {
-          if ( $value )
-            $this->object->{$obj_key} = $value;
-
-          return $obj_value;
-        }
-      }
+      foreach ( $post as $post_field => $post_value )
+        $this->{$post_field} = $post_value;
     }
 
     public function save()
     {
-      $class = strtolower( static::$class_name );
-
-      $id = null;
-
-      $_POST[$class][static::$id_column] > 0 ? $id = $this->update() : $id = $this->create();
+      $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
     
       return $id;
+    }
+
+    protected function populate()
+    {
+      global $wpdb;
+
+      $table = static::$table_name;
+      $class = strtolower( static::$class_name );
+
+      $results = $wpdb->get_results( "SHOW COLUMNS FROM $table;" );
+
+      static::$db_columns = $results;
+
+      foreach ( $results as $result ) {
+        if ( ! property_exists( $this, $result->Field ) ) {
+          $this->{$result->Field} = null;
+        }
+      }
+    }
+
+    protected function populate_fields( $result, &$return_object = null )
+    {
+      foreach ( $result as $field => $value )
+        $return_object ? $return_object->{$field} = $value : $this->{$field} = $value;
+    }
+
+    protected function populate_sub_class( $each_object_array, $each_object )
+    {
+      //echo '<pre>';
+      //var_dump( $object );
+      //echo '</pre>';
+
+      //$each_object_array = $object;
+
+      foreach ( $each_object_array as $each_object_item ) {
+        $each_object->{$each_object_item->option_name} = $each_object_item;
+      }
+    }
+
+    private function class_init()
+    {
+      if ( method_exists( $this, 'init' ) )
+        $this->init();
     }
 
     private function create()
@@ -97,23 +159,22 @@ namespace WpMvc
       $table = static::$table_name;
       $class = strtolower( static::$class_name );
 
-      $wpdb->insert( $table, $_POST[$class], array() );
+      $wpdb->insert( $table, $this->as_db_array(), array() );
 
       return $wpdb->insert_id;
     }
 
-    private function update() {
+    private function update()
+    {
       global $wpdb;
 
       $table = static::$table_name;
       $class = strtolower( static::$class_name );
-
-      $id = $_POST[$class][static::$id_column];
-      unset( $_POST[$class][static::$id_column] );
+      $id = $this->{static::$id_column};
 
       $wpdb->update(
         $table,
-        $_POST[$class],
+        $this->as_db_array(),
         array(
           static::$id_column => $id
         ), 
@@ -122,6 +183,19 @@ namespace WpMvc
       );
 
       return $id;
+    }
+
+    private function as_db_array()
+    {
+      $return_array = array();
+
+      foreach ( static::$db_columns as $db_column ) {
+        if ( $this->{$db_column->Field} || $this->{$db_column->Field} == 0 ) {
+          $return_array[$db_column->Field] = $this->{$db_column->Field};
+        }
+      }
+
+      return $return_array;
     }
   }
 }

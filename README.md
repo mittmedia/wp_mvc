@@ -4,6 +4,8 @@ wp_mvc
 A library for WordPress needed to empower this plugin:
 https://github.com/mittmedia/theme_stats
 
+It's made by Fredrik Sundström and Magnus Engström.
+
 How to install
 --------------
 

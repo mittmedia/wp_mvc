@@ -49,7 +49,7 @@ namespace WpMvc
     public static function input_text( $name )
     {
       $class_name = static::$class_name;
-      $object_value = static::$object->attr( $name );
+      $object_value = static::$object->{$name};
 
       return "<input type='text' name='{$class_name}[{$name}]' id='{$class_name}_{$name}' class='standard-text' value='$object_value' />";
     }
@@ -57,7 +57,7 @@ namespace WpMvc
     public static function input_textarea( $name )
     {
       $class_name = static::$class_name;
-      $object_value = static::$object->attr( $name );
+      $object_value = static::$object->{$name};
 
       return "<textarea name='{$class_name}[{$name}]' id='{$class_name}_{$name}' class='standard-text'>$object_value</textarea>";
     }

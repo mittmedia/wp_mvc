@@ -8,7 +8,7 @@ namespace WpMvc
     {
       $controller_class = get_class( $controller );
 
-      $controller_name = \WpMvc\Application::rename_controller_class_to_file( $controller_class );
+      $controller_name = \WpMvc\ApplicationHelper::rename_controller_class_to_file( $controller_class );
       $controller_dir = preg_replace( '/_controller/', '', $controller_name );
       $action_file = $action . '.php';
 
