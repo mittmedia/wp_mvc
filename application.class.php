@@ -4,13 +4,15 @@ namespace WpMvc
 {
   class Application
   {
-    public function init()
-    {
-      $home_path = \WpMvc\Config::$home_path;
+    private $home_path;
 
-      $this->init_controllers( $home_path . '/controllers' );
-      $this->init_helpers( $home_path . '/helpers' );
-      $this->init_models( $home_path . '/models' );
+    public function init( $path )
+    {
+      $this->home_path = $path;
+
+      $this->init_controllers( $path . '/controllers' );
+      $this->init_helpers( $path . '/helpers' );
+      $this->init_models( $path . '/models' );
     }
 
     private function init_controllers( $path )
@@ -62,7 +64,7 @@ namespace WpMvc
 
           $class_name = \WpMvc\ApplicationHelper::rename_controller_file_to_class( $controller_name );
 
-          $this->{$controller_name} = new $class_name();
+          $this->{$controller_name} = new $class_name( $this->home_path );
         }
       }
     }
