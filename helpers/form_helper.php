@@ -4,26 +4,26 @@ namespace WpMvc
 {
   class FormHelper
   {
-    protected static $object;
-    protected static $class_name;
+    protected $object;
+    protected $class_name;
 
     public static function render_form( $object, $content, $action = null )
     {
       if ( $action == null )
         $action = $_SERVER['REQUEST_URI'];
 
-      static::$object = $object;
+      $this->object = $object;
 
       $class_name = get_class( $object );
-      static::$class_name = strtolower( $class_name );
+      $this->class_name = strtolower( $class_name );
 
       $html = "<form action='$action' method='post'>";
 
       foreach ( $content as $name => $type ) {
-        $html .= static::form_element( $name, $type );
+        $html .= $this->form_element( $name, $type );
       }
 
-      $html .= static::default_actions();
+      $html .= $this->default_actions();
 
       $html .= "</form>";
 
@@ -36,10 +36,10 @@ namespace WpMvc
 
       switch ( $type ) {
         case 'text':
-          $html = static::input_text( $name );
+          $html = $this->input_text( $name );
           break;
         case 'textarea':
-          $html = static::input_textarea( $name );
+          $html = $this->input_textarea( $name );
           break;
       }
 
@@ -48,16 +48,16 @@ namespace WpMvc
 
     public static function input_text( $name )
     {
-      $class_name = static::$class_name;
-      $object_value = static::$object->{$name};
+      $class_name = $this->class_name;
+      $object_value = $this->object->{$name};
 
       return "<input type='text' name='{$class_name}[{$name}]' id='{$class_name}_{$name}' class='standard-text' value='$object_value' />";
     }
 
     public static function input_textarea( $name )
     {
-      $class_name = static::$class_name;
-      $object_value = static::$object->{$name};
+      $class_name = $this->class_name;
+      $object_value = $this->object->{$name};
 
       return "<textarea name='{$class_name}[{$name}]' id='{$class_name}_{$name}' class='standard-text'>$object_value</textarea>";
     }

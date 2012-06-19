@@ -7,7 +7,7 @@ namespace WpMvc
     public static $table_name;
     public static $class_name;
     public static $id_column;
-    protected static $db_columns;
+    protected $db_columns;
 
     public function __construct()
     {
@@ -89,7 +89,7 @@ namespace WpMvc
 
     public static function virgin()
     {
-      $class = static::$class_name;
+      $class = $this->class_name;
 
       $return_object = new $class();
 
@@ -118,7 +118,7 @@ namespace WpMvc
 
       $results = $wpdb->get_results( "SHOW COLUMNS FROM $table;" );
 
-      static::$db_columns = $results;
+      $this->db_columns = $results;
 
       foreach ( $results as $result ) {
         if ( ! property_exists( $this, $result->Field ) ) {
@@ -135,17 +135,6 @@ namespace WpMvc
 
     protected static function has_many( &$each_object, $each_object_array )
     {
-      echo '<pre>';
-      var_dump( $each_object_array );
-      echo '</pre>';
-
-      foreach ( $each_object_array as $each_object_item ) {
-        $each_object->{$each_object_item->option_name} = $each_object_item;
-      }
-    }
-
-    protected function populate_sub_class( $each_object_array, $each_object )
-    {
       foreach ( $each_object_array as $each_object_item ) {
         $each_object->{$each_object_item->option_name} = $each_object_item;
       }
@@ -161,8 +150,8 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $class = strtolower( static::$class_name );
+      $table = $this->table_name;
+      $class = strtolower( $this->class_name );
 
       $wpdb->insert( $table, $this->as_db_array(), array() );
 
@@ -194,7 +183,7 @@ namespace WpMvc
     {
       $return_array = array();
 
-      foreach ( static::$db_columns as $db_column ) {
+      foreach ( $this->db_columns as $db_column ) {
         if ( $this->{$db_column->Field} || $this->{$db_column->Field} == 0 ) {
           $return_array[$db_column->Field] = $this->{$db_column->Field};
         }

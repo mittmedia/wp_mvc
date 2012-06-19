@@ -10,7 +10,7 @@ class UserMeta extends \WpMvc\BaseModel
   {
     global $wpdb;
 
-    $table = static::$table_name;
+    $table = $this->table_name;
 
     $return_object = self::query( $wpdb->prepare( "SELECT * FROM $table WHERE user_id = %s AND meta_key = %s LIMIT 1;", $user_id, $key ) );
 
