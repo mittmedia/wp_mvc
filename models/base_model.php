@@ -98,8 +98,21 @@ namespace WpMvc
 
     public function takes_post( $post )
     {
-      foreach ( $post as $post_field => $post_value )
-        $this->{$post_field} = $post_value;
+      foreach ( $post as $post_field => $post_value ) {
+        if ( is_array( $post_value ) ) {
+          foreach ( $post_value as $value_key => $value_value ) {
+            if ( is_array( $value_value ) ) {
+              foreach ( $value_value as $value_value_key => $value_value_value ) {
+                $this->{$post_field}->{$value_key}->{$value_value_key} = $value_value_value;
+              }
+            } else {
+              $this->{$post_field}->{$value_key} = $value_value;
+            }
+          }
+        } else {
+          $this->{$post_field} = $post_value;
+        }
+      }
     }
 
     public function save()
@@ -131,13 +144,6 @@ namespace WpMvc
     {
       foreach ( $result as $field => $value )
         $return_object ? $return_object->{$field} = $value : $this->{$field} = $value;
-    }
-
-    protected static function has_many( &$each_object, $each_object_array )
-    {
-      foreach ( $each_object_array as $each_object_item ) {
-        $each_object->{$each_object_item->option_name} = $each_object_item;
-      }
     }
 
     private function class_init()
