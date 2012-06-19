@@ -133,14 +133,19 @@ namespace WpMvc
         $return_object ? $return_object->{$field} = $value : $this->{$field} = $value;
     }
 
+    protected static function has_many( &$each_object, $each_object_array )
+    {
+      echo '<pre>';
+      var_dump( $each_object_array );
+      echo '</pre>';
+
+      foreach ( $each_object_array as $each_object_item ) {
+        $each_object->{$each_object_item->option_name} = $each_object_item;
+      }
+    }
+
     protected function populate_sub_class( $each_object_array, $each_object )
     {
-      //echo '<pre>';
-      //var_dump( $object );
-      //echo '</pre>';
-
-      //$each_object_array = $object;
-
       foreach ( $each_object_array as $each_object_item ) {
         $each_object->{$each_object_item->option_name} = $each_object_item;
       }
