@@ -9,7 +9,7 @@ class Option extends \WpMvc\BaseModel
   public static function find_by_blog_id( $blog_id )
   {
     if ( $blog_id != 1 )
-      $this->table_name = "wp_{$blog_id}_options";
+      static::$table_name = "wp_{$blog_id}_options";
 
     global $wpdb;
 
