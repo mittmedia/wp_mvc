@@ -27,7 +27,7 @@ namespace WpMvc
 
       foreach ( $results as $result ) {
         $return_object = new $class();
-        
+
         $return_object->populate_fields( $result, $return_object );
 
         $return_object->class_init();
@@ -98,27 +98,22 @@ namespace WpMvc
 
     public function takes_post( $post )
     {
-      foreach ( $post as $post_field => $post_value ) {
-        if ( is_array( $post_value ) ) {
-          foreach ( $post_value as $value_key => $value_value ) {
-            if ( is_array( $value_value ) ) {
-              foreach ( $value_value as $value_value_key => $value_value_value ) {
-                $this->{$post_field}->{$value_key}->{$value_value_key} = $value_value_value;
-              }
-            } else {
-              $this->{$post_field}->{$value_key} = $value_value;
-            }
-          }
-        } else {
-          $this->{$post_field} = $post_value;
-        }
-      }
+      $key_array = array();
+      $this->iterate_post_keys( $post, $key_array );
     }
 
     public function save()
     {
       $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
-    
+
+      $object_array = array();
+
+      $this->iterate_save_keys( $this, $object_array );
+
+      foreach ( $object_array as $object ) {
+        $object->save();
+      }
+
       return $id;
     }
 
@@ -145,6 +140,56 @@ namespace WpMvc
       foreach ( $result as $field => $value )
         $return_object ? $return_object->{$field} = $value : $this->{$field} = $value;
     }
+
+    private function iterate_post_keys( $post, &$key_array )
+    {
+      foreach ( $post as $key => $value ) {
+        if ( is_array( $value ) ) {
+          array_push( $key_array, $key );
+          $this->iterate_post_keys( $value, $key_array );
+        } else {
+          array_push( $key_array, $key );
+
+          switch ( count( $key_array ) ) {
+            case '1':
+              $this->assign_array_depth1( $key_array, $value );
+              break;
+            case '2':
+              $this->assign_array_depth2( $key_array, $value );
+              break;
+            case '3':
+              $this->assign_array_depth3( $key_array, $value );
+              break;
+            case '4':
+              $this->assign_array_depth4( $key_array, $value );
+              break;
+            case '5':
+              $this->assign_array_depth5( $key_array, $value );
+              break;
+          }
+
+          $key_array = array();
+        }
+      }
+    }
+
+    private function iterate_save_keys( $object, &$object_array )
+    {
+      foreach ( $object as $object_item ) {
+        if ( is_object( $object_item ) ) {
+          if ( method_exists( $object_item, 'save' ) )
+            array_push( $object_array, $object_item );
+
+          $this->iterate_save_keys( $object_item, $object_array );
+        }
+      }
+    }
+
+    private function assign_array_depth1( $keys, $value ) { $this->{$keys[0]} = $value; }
+    private function assign_array_depth2( $keys, $value ) { $this->{$keys[0]}->{$keys[1]} = $value; }
+    private function assign_array_depth3( $keys, $value ) { $this->{$keys[0]}->{$keys[1]}->{$keys[2]} = $value; }
+    private function assign_array_depth4( $keys, $value ) { $this->{$keys[0]}->{$keys[1]}->{$keys[2]}->{$keys[3]} = $value; }
+    private function assign_array_depth5( $keys, $value ) { $this->{$keys[0]}->{$keys[1]}->{$keys[2]}->{$keys[3]}->{$keys[3]} = $value; }
 
     private function class_init()
     {
