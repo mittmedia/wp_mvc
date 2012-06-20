@@ -3,6 +3,7 @@
 require_once( 'wp_mvc-1.0.0/controllers/base_controller.php' );
 
 require_once( 'wp_mvc-1.0.0/helpers/application_helper.php' );
+require_once( 'wp_mvc-1.0.0/helpers/dev_helper.php' );
 require_once( 'wp_mvc-1.0.0/helpers/form_helper.php' );
 require_once( 'wp_mvc-1.0.0/helpers/view_helper.php' );
 
