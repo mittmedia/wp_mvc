@@ -1,19 +1,22 @@
 <?php
 
-class UserMeta extends \WpMvc\BaseModel
+namespace WpMvc
 {
-  public static $table_name = 'wp_usermeta';
-  public static $class_name = 'UserMeta';
-  public static $id_column = 'umeta_id';
-
-  public static function find_by_user_id( $user_id )
+  class UserMeta extends \WpMvc\BaseModel
   {
-    global $wpdb;
+    public static $table_name = 'wp_usermeta';
+    public static $class_name = '\WpMvc\UserMeta';
+    public static $id_column = 'umeta_id';
 
-    $table_name = static::$table_name;
+    public static function find_by_user_id( $user_id )
+    {
+      global $wpdb;
 
-    $query = "SELECT * FROM $table_name WHERE user_id = $user_id;";
+      $table_name = static::$table_name;
 
-    return self::query( $query );
+      $query = "SELECT * FROM $table_name WHERE user_id = $user_id;";
+
+      return self::query( $query );
+    }
   }
 }

@@ -1,23 +1,27 @@
 <?php
 
-class Site extends \WpMvc\BaseModel
+namespace WpMvc
 {
-  public static $table_name = 'wp_site';
-  public static $class_name = 'Site';
-  public static $id_column = 'id';
-  public $sitemeta;
-
-  public function init()
+  class Site extends \WpMvc\BaseModel
   {
-    static::has_many_site_meta();
-  }
+    public static $table_name = 'wp_site';
+    public static $class_name = '\WpMvc\Site';
+    public static $id_column = 'id';
+    public $sitemeta;
 
-  private function has_many_site_meta()
-  {
-    $meta = \SiteMeta::find_by_site_id( $this->{static::$id_column} );
+    public function init()
+    {
+      static::has_many_site_meta();
+    }
 
-    foreach ( $meta as $meta_item ) {
-      $this->sitemeta->{$meta_item->meta_key} = $meta_item;
+    private function has_many_site_meta()
+    {
+      $meta = SiteMeta::find_by_site_id( $this->{static::$id_column} );
+
+      foreach ( $meta as $meta_item ) {
+        $this->sitemeta->{$meta_item->meta_key} = $meta_item;
+      }
     }
   }
+
 }

@@ -1,22 +1,26 @@
 <?php
 
-class Option extends \WpMvc\BaseModel
+namespace WpMvc
 {
-  public static $table_name = 'wp_options';
-  public static $class_name = 'Option';
-  public static $id_column = 'option_id';
-
-  public static function find_by_blog_id( $blog_id )
+  class Option extends \WpMvc\BaseModel
   {
-    if ( $blog_id != 1 )
-      static::$table_name = "wp_{$blog_id}_options";
+    public static $table_name = 'wp_options';
+    public static $class_name = '\WpMvc\Option';
+    public static $id_column = 'option_id';
 
-    global $wpdb;
+    public static function find_by_blog_id( $blog_id )
+    {
+      if ( $blog_id != 1 )
+        static::$table_name = "wp_{$blog_id}_options";
 
-    $table_name = static::$table_name;
+      global $wpdb;
 
-    $query = "SELECT * FROM $table_name;";
+      $table_name = static::$table_name;
 
-    return self::query( $query );
+      $query = "SELECT * FROM $table_name;";
+
+      return self::query( $query );
+    }
   }
+
 }

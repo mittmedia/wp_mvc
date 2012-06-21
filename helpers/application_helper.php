@@ -61,5 +61,20 @@ namespace WpMvc
 
       return substr( $controller_name_array[1], 1 );
     }
+
+    public static function remove_namespace_with_split( $class_name )
+    {
+      if ( is_array( $class_name ) ) {
+        for ( $i = 0; $i < count( $class_name ); $i++ ) {
+          $class_name_array = explode( '\\', $class_name[$i] );
+
+          $class_name[$i] = $class_name_array[1];
+        }
+      } else {
+        $class_name_array = explode( '\\', $class_name );
+
+        $class_name = $class_name_array[1];
+      }
+    }
   }
 }

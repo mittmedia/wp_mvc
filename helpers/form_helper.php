@@ -97,8 +97,12 @@ namespace WpMvc
     private static function get_attribute_name( $name, $class_name, $object = null, $key = null )
     {
       if ( is_array( $class_name ) || is_array( $object ) ) {
+        \WpMvc\ApplicationHelper::remove_namespace_with_split( &$class_name );
+
         return "{$class_name[0]}[{$class_name[1]}][{$name}]" . ( $key ? "[{$key}]" : '' );
       } else {
+        \WpMvc\ApplicationHelper::remove_namespace_with_split( &$class_name );
+
         return "{$class_name}[{$name}]";
       }
     }
@@ -106,8 +110,12 @@ namespace WpMvc
     private static function get_attribute_id( $name, $class_name )
     {
       if ( is_array( $class_name ) ) {
+        \WpMvc\ApplicationHelper::remove_namespace_with_split( &$class_name );
+
         return "{$class_name[0]}_{$class_name[1]}_{$name}";
       } else {
+        \WpMvc\ApplicationHelper::remove_namespace_with_split( &$class_name );
+
         return "{$class_name}_{$name}";
       }
     }
