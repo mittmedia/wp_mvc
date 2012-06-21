@@ -18,15 +18,15 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $class = static::$class_name;
+      $table_name = static::$table_name;
+      $class_name = static::$class_name;
 
-      $results = $wpdb->get_results( "SELECT * FROM $table;" );
+      $results = $wpdb->get_results( "SELECT * FROM $table_name;" );
 
       $all = array();
 
       foreach ( $results as $result ) {
-        $return_object = new $class();
+        $return_object = new $class_name();
 
         $return_object->populate_fields( $result, $return_object );
 
@@ -42,13 +42,13 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
+      $table_name = static::$table_name;
       $id_column = static::$id_column;
-      $class = static::$class_name;
+      $class_name = static::$class_name;
 
-      $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE $id_column = %s LIMIT 1;", $id ) );
+      $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE $id_column = %s LIMIT 1;", $id ) );
 
-      $return_object = new $class();
+      $return_object = new $class_name();
 
       if ( $results ) {
         $return_object->populate_fields( $results[0], $return_object );
@@ -65,8 +65,7 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $class = static::$class_name;
+      $class_name = static::$class_name;
 
       $results = $wpdb->get_results( $query );
 
@@ -74,7 +73,7 @@ namespace WpMvc
 
       if ( $results ) {
         foreach ( $results as $result ) {
-          $return_object = new $class();
+          $return_object = new $class_name();
           
           $return_object->populate_fields( $result, $return_object );
 
@@ -89,9 +88,9 @@ namespace WpMvc
 
     public static function virgin()
     {
-      $class = $this->class_name;
+      $class_name = static::$class_name;
 
-      $return_object = new $class();
+      $return_object = new $class_name();
 
       return $return_object;
     }
@@ -99,16 +98,18 @@ namespace WpMvc
     public function takes_post( $post )
     {
       $key_array = array();
-      $this->iterate_post_keys( $post, $key_array );
+      $this->iterate_post_keys_and_populate( $post, $post, $key_array );
     }
 
     public function save()
     {
+      $this->validate();
+
       $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
 
       $object_array = array();
 
-      $this->iterate_save_keys( $this, $object_array );
+      $this->iterate_object_for_method_save( $this, $object_array );
 
       foreach ( $object_array as $object ) {
         $object->save();
@@ -117,14 +118,19 @@ namespace WpMvc
       return $id;
     }
 
+    protected function validate()
+    {
+      if ( method_exists( $this, 'validate_uniqueness' ) )
+        $this->validate_uniqueness();
+    }
+
     protected function populate()
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $class = strtolower( static::$class_name );
+      $table_name = static::$table_name;
 
-      $results = $wpdb->get_results( "SHOW COLUMNS FROM $table;" );
+      $results = $wpdb->get_results( "SHOW COLUMNS FROM $table_name;" );
 
       $this->db_columns = $results;
 
@@ -141,55 +147,76 @@ namespace WpMvc
         $return_object ? $return_object->{$field} = $value : $this->{$field} = $value;
     }
 
-    private function iterate_post_keys( $post, &$key_array )
+    private function iterate_post_keys_and_populate( $post, $maintain_post, &$key_array )
     {
-      foreach ( $post as $key => $value ) {
-        if ( is_array( $value ) ) {
-          array_push( $key_array, $key );
-          $this->iterate_post_keys( $value, $key_array );
+      foreach ( $post as $post_key => $post_value ) {
+        if ( is_array( $post_value ) ) {
+          array_push( $key_array, $post_key );
+
+          $this->iterate_post_keys_and_populate( $post_value, $maintain_post, $key_array );
         } else {
-          array_push( $key_array, $key );
+          array_push( $key_array, $post_key );
 
           switch ( count( $key_array ) ) {
-            case '1':
-              $this->assign_array_depth1( $key_array, $value );
-              break;
             case '2':
-              $this->assign_array_depth2( $key_array, $value );
+              $this->assign_array_depth2( $key_array, $maintain_post, $post_value );
               break;
             case '3':
-              $this->assign_array_depth3( $key_array, $value );
+              $this->assign_array_depth3( $key_array, $maintain_post, $post_value );
+              $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
               break;
             case '4':
-              $this->assign_array_depth4( $key_array, $value );
+              $this->assign_array_depth4( $key_array, $maintain_post, $post_value );
+              $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
               break;
             case '5':
-              $this->assign_array_depth5( $key_array, $value );
+              $this->assign_array_depth5( $key_array, $maintain_post, $post_value );
+              $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
               break;
           }
-
-          $key_array = array();
         }
       }
     }
 
-    private function iterate_save_keys( $object, &$object_array )
+    private function assign_array_depth2( &$key_array, &$maintain_post, $value )
+    {
+      unset( $maintain_post[$key_array[0]] );
+      $this->{$key_array[0]}->{$key_array[1]} = $value;
+      $key_array = array();
+    }
+
+    private function assign_array_depth3( &$key_array, &$maintain_post, $value )
+    {
+      unset( $maintain_post[$key_array[0]][$key_array[1]] );
+      $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]} = $value;
+      $key_array = array();
+    }
+
+    private function assign_array_depth4( &$key_array, &$maintain_post, $value )
+    {
+      unset( $maintain_post[$key_array[0]][$key_array[1]][$key_array[2]] );
+      $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]} = $value;
+      $key_array = array();
+    }
+
+    private function assign_array_depth5( &$key_array, &$maintain_post, $value )
+    {
+      unset( $maintain_post[$key_array[0]][$key_array[1]][$key_array[2]][$key_array[3]] );
+      $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]}->{$key_array[4]} = $value;
+      $key_array = array();
+    }
+
+    private function iterate_object_for_method_save( $object, &$object_array )
     {
       foreach ( $object as $object_item ) {
         if ( is_object( $object_item ) ) {
           if ( method_exists( $object_item, 'save' ) )
             array_push( $object_array, $object_item );
 
-          $this->iterate_save_keys( $object_item, $object_array );
+          $this->iterate_object_for_method_save( $object_item, $object_array );
         }
       }
     }
-
-    private function assign_array_depth1( $keys, $value ) { $this->{$keys[0]} = $value; }
-    private function assign_array_depth2( $keys, $value ) { $this->{$keys[0]}->{$keys[1]} = $value; }
-    private function assign_array_depth3( $keys, $value ) { $this->{$keys[0]}->{$keys[1]}->{$keys[2]} = $value; }
-    private function assign_array_depth4( $keys, $value ) { $this->{$keys[0]}->{$keys[1]}->{$keys[2]}->{$keys[3]} = $value; }
-    private function assign_array_depth5( $keys, $value ) { $this->{$keys[0]}->{$keys[1]}->{$keys[2]}->{$keys[3]}->{$keys[3]} = $value; }
 
     private function class_init()
     {
@@ -201,10 +228,9 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = $this->table_name;
-      $class = strtolower( $this->class_name );
+      $table_name = static::$table_name;
 
-      $wpdb->insert( $table, $this->as_db_array(), array() );
+      $wpdb->insert( $table_name, $this->as_db_array(), array() );
 
       return $wpdb->insert_id;
     }
@@ -213,21 +239,20 @@ namespace WpMvc
     {
       global $wpdb;
 
-      $table = static::$table_name;
-      $class = strtolower( static::$class_name );
-      $id = $this->{static::$id_column};
+      $table_name = static::$table_name;
+      $id_column = $this->{static::$id_column};
 
       $wpdb->update(
-        $table,
+        $table_name,
         $this->as_db_array(),
         array(
-          static::$id_column => $id
+          static::$id_column => $id_column
         ), 
         array(), 
         array() 
       );
 
-      return $id;
+      return $id_column;
     }
 
     private function as_db_array()
