@@ -9,22 +9,32 @@ namespace WpMvc
       if ( $action == null )
         $action = $_SERVER['REQUEST_URI'];
 
-      $class_name = get_class( $object );
-      $class_name_lowered = strtolower( $class_name );
-
       $html = "<form action='$action' method='post'>";
+      $html .= "<table class='form-table'>";
+      $html .= "<tbody>";
 
-      foreach ( $content as $name => $type_or_value ) {
-        if ( $name == 'object' ) {
-          $sub_object = $type_or_value['object'];
+      foreach ( $content as $name => $value ) {
+        $class_name = get_class( $object );
+        $class_name_lowered = strtolower( $class_name );
+
+        if ( isset( $value['object'] ) ) {
+          $sub_object = $value['object'];
           $sub_class_name = get_class( $sub_object );
           $sub_class_name_lowered = strtolower( $sub_class_name );
 
-          $html .= static::form_element( $type_or_value['name'], $type_or_value['type'], array( $class_name_lowered, $sub_class_name_lowered ), array( $object, $sub_object ), $type_or_value['default_value'], $type_or_value['key'] );
+          $options = null;
+
+          if ( isset( $value['options'] ) )
+            $options = $value['options'];
+
+          $html .= static::form_element( $value['title'], $value['name'], $value['type'], array( $class_name_lowered, $sub_class_name_lowered ), array( $object, $sub_object ), $value['default_value'], $value['key'], $options );
         } else {
-          $html .= static::form_element( $name, $type_or_value, $class_name_lowered, $object );
+          $html .= static::form_element( $value['title'], $value['name'], $value['type'], $class_name_lowered, $object );
         }
       }
+
+      $html .= "</tbody>";
+      $html .= "</table>";
 
       $html .= static::default_actions( $verb );
 
@@ -33,48 +43,55 @@ namespace WpMvc
       echo $html;
     }
 
-    public static function form_element( $name, $type, $class_name, $object, $default_value = null, $key = null )
+    public static function form_element( $title, $name, $type, $class_name, $object, $default_value = null, $key = null, $options = null )
     {
-      $html = "";
+      $html = "<tr valign='top'>";
+      $html .= "<th scope='row'><label for='$name'>" . __( $title ) . "</label></th>";
+      $html .= "<td>";
 
       switch ( $type ) {
         case 'text':
-          $html = static::input_text( $name, $class_name, $object, $default_value, $key );
+          $html .= static::input_text( $name, $class_name, $object, $default_value, $key );
           break;
-        case 'textarea':
-          $html = $this->input_textarea( $name );
+        case 'select':
+          $html .= static::input_select( $name, $class_name, $object, $default_value, $key, $options );
           break;
       }
+
+      $html .= "</td>";
+      $html .= "</tr>";
 
       return $html;
     }
 
     public static function input_text( $name, $class_name, $object, $default_value, $key )
     {
-      if ( is_array( $class_name ) || is_array( $object )  )
-        return "<input type='text' name='{$class_name[0]}[{$class_name[1]}][{$name}]" . ( $key ? "[{$key}]" : '' ) . "' id='{$class_name[0]}_{$class_name[1]}_{$name}' class='standard-text' value='$default_value' />";
-      else
-        return "<input type='text' name='{$class_name}[{$name}]' id='{$class_name}_{$name}' class='standard-text' value='" . ( $default_value ? $default_value : $object->{$name} ) . "' />";
-    }
-
-    public static function input_textarea( $name )
-    {
-      $class_name = $this->class_name;
-      $object_value = $this->object->{$name};
-
-      return "<textarea name='{$class_name}[{$name}]' id='{$class_name}_{$name}' class='standard-text'>$object_value</textarea>";
-    }
-
-    public static function default_actions( $verb )
-    {
-      switch ( $verb ) {
-        case 'create':
-          return "<p class='submit'><input type='submit' name='submit' id='submit' class='button-primary' value='" . __( 'Create' ) . "'></p>";
-          break;
-        case 'update':
-          return "<p class='submit'><input type='submit' name='submit' id='submit' class='button-primary' value='" . __( 'Update' ) . "'></p>";
-          break;
+      if ( is_array( $class_name ) || is_array( $object ) ) {
+        return "<input type='text' name='{$class_name[0]}[{$class_name[1]}][{$name}]" . ( $key ? "[{$key}]" : '' ) . "' id='{$class_name[0]}_{$class_name[1]}_{$name}' class='regular-text' value='$default_value' />";
+      } else {
+        return "<input type='text' name='{$class_name}[{$name}]' id='{$class_name}_{$name}' class='regular-text' value='" . ( $default_value ? $default_value : $object->{$name} ) . "' />";
       }
+    }
+
+    public static function input_select( $name, $class_name, $object, $default_value, $key, $options )
+    {
+      $html = "<select name='{$class_name[0]}[{$class_name[1]}][{$name}]" . ( $key ? "[{$key}]" : '' ) . "' id='{$class_name[0]}_{$class_name[1]}_{$name}'>";
+
+      foreach ( $options as $option ) {
+        if ( $option == $default_value )
+          $html .= "<option selected='selected'>$option</option>";
+        else
+          $html .= "<option>$option</option>";
+      }
+
+      $html .= "</select>";
+
+      return $html;
+    }
+
+    public static function default_actions()
+    {
+      return "<p class='submit'><input type='submit' name='submit' id='submit' class='button-primary' value='" . __( 'Save Changes' ) . "'></p>";
     }
   }
 }
