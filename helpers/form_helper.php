@@ -46,7 +46,7 @@ namespace WpMvc
     public static function form_element( $title, $name, $type, $class_name, $object, $default_value = null, $key = null, $options = null )
     {
       $html = "<tr valign='top'>";
-      $html .= "<th scope='row'><label for='$name'>" . __( $title ) . "</label></th>";
+      $html .= "<th scope='row'><label for='" . static::get_attribute_id( $name, $class_name ) . "'>" . __( $title ) . "</label></th>";
       $html .= "<td>";
 
       switch ( $type ) {
@@ -67,15 +67,15 @@ namespace WpMvc
     public static function input_text( $name, $class_name, $object, $default_value, $key )
     {
       if ( is_array( $class_name ) || is_array( $object ) ) {
-        return "<input type='text' name='{$class_name[0]}[{$class_name[1]}][{$name}]" . ( $key ? "[{$key}]" : '' ) . "' id='{$class_name[0]}_{$class_name[1]}_{$name}' class='regular-text' value='$default_value' />";
+        return "<input type='text' name='" . static::get_attribute_name( $name, $class_name, $object, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='regular-text' value='$default_value' />";
       } else {
-        return "<input type='text' name='{$class_name}[{$name}]' id='{$class_name}_{$name}' class='regular-text' value='" . ( $default_value ? $default_value : $object->{$name} ) . "' />";
+        return "<input type='text' name='" . static::get_attribute_name( $name, $class_name ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='regular-text' value='" . ( $default_value ? $default_value : $object->{$name} ) . "' />";
       }
     }
 
     public static function input_select( $name, $class_name, $object, $default_value, $key, $options )
     {
-      $html = "<select name='{$class_name[0]}[{$class_name[1]}][{$name}]" . ( $key ? "[{$key}]" : '' ) . "' id='{$class_name[0]}_{$class_name[1]}_{$name}'>";
+      $html = "<select name='" . static::get_attribute_name( $name, $class_name, $object, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "'>";
 
       foreach ( $options as $option ) {
         if ( $option == $default_value )
@@ -92,6 +92,24 @@ namespace WpMvc
     public static function default_actions()
     {
       return "<p class='submit'><input type='submit' name='submit' id='submit' class='button-primary' value='" . __( 'Save Changes' ) . "'></p>";
+    }
+
+    private static function get_attribute_name( $name, $class_name, $object = null, $key = null )
+    {
+      if ( is_array( $class_name ) || is_array( $object ) ) {
+        return "{$class_name[0]}[{$class_name[1]}][{$name}]" . ( $key ? "[{$key}]" : '' );
+      } else {
+        return "{$class_name}[{$name}]";
+      }
+    }
+
+    private static function get_attribute_id( $name, $class_name )
+    {
+      if ( is_array( $class_name ) ) {
+        return "{$class_name[0]}_{$class_name[1]}_{$name}";
+      } else {
+        return "{$class_name}_{$name}";
+      }
     }
   }
 }
