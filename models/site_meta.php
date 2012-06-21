@@ -10,9 +10,9 @@ class SiteMeta extends \WpMvc\BaseModel
   {
     global $wpdb;
 
-    $table = static::$table_name;
+    $table_name = static::$table_name;
 
-    $query = "SELECT * FROM $table WHERE site_id = $site_id;";
+    $query = "SELECT * FROM $table_name WHERE site_id = $site_id;";
 
     return self::query( $query );
   }

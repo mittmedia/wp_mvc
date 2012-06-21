@@ -13,9 +13,9 @@ class Option extends \WpMvc\BaseModel
 
     global $wpdb;
 
-    $table = static::$table_name;
+    $table_name = static::$table_name;
 
-    $query = "SELECT * FROM $table;";
+    $query = "SELECT * FROM $table_name;";
 
     return self::query( $query );
   }

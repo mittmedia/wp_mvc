@@ -6,14 +6,14 @@ class UserMeta extends \WpMvc\BaseModel
   public static $class_name = 'UserMeta';
   public static $id_column = 'umeta_id';
 
-  public static function find_by_user_id_and_key( $user_id, $key )
+  public static function find_by_user_id( $user_id )
   {
     global $wpdb;
 
-    $table = $this->table_name;
+    $table_name = static::$table_name;
 
-    $return_object = self::query( $wpdb->prepare( "SELECT * FROM $table WHERE user_id = %s AND meta_key = %s LIMIT 1;", $user_id, $key ) );
+    $query = "SELECT * FROM $table_name WHERE user_id = $user_id;";
 
-    return $return_object[0]->meta_value;
+    return self::query( $query );
   }
 }

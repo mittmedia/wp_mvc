@@ -9,10 +9,10 @@ class Site extends \WpMvc\BaseModel
 
   public function init()
   {
-    static::has_many_meta();
+    static::has_many_site_meta();
   }
 
-  private function has_many_meta()
+  private function has_many_site_meta()
   {
     $meta = \SiteMeta::find_by_site_id( $this->{static::$id_column} );
 
