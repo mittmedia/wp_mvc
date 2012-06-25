@@ -23,5 +23,10 @@ namespace WpMvc
 
       include( $full_path );
     }
+
+    public static function redirect_to( $url )
+    {
+      echo "<meta http-equiv='refresh' content='0; URL=$url' />";
+    }
   }
 }

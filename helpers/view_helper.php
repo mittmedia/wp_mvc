@@ -29,5 +29,18 @@ namespace WpMvc
 
       include( $template_path );
     }
+
+    public static function admin_notice( $message )
+    {
+      $html = <<<html
+
+<div class="updated">
+  <p>$message</p>
+</div>
+
+html;
+
+      return $html;
+    }
   }
 }
