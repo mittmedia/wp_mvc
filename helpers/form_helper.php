@@ -56,6 +56,9 @@ namespace WpMvc
         case 'select':
           $html .= static::input_select( $name, $class_name, $object, $default_value, $key, $options );
           break;
+        case 'textarea':
+          $html .= static::input_textarea( $name, $class_name, $object, $default_value, $key );
+          break;
       }
 
       $html .= "</td>";
@@ -70,6 +73,16 @@ namespace WpMvc
         return "<input type='text' name='" . static::get_attribute_name( $name, $class_name, $object, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='regular-text' value='$default_value' />";
       } else {
         return "<input type='text' name='" . static::get_attribute_name( $name, $class_name ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='regular-text' value='" . ( $default_value ? $default_value : $object->{$name} ) . "' />";
+      }
+    }
+
+
+    public static function input_textarea( $name, $class_name, $object, $default_value, $key )
+    {
+      if ( is_array( $class_name ) || is_array( $object ) ) {
+        return "<textarea name='" . static::get_attribute_name( $name, $class_name, $object, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='large-text' cols='50' rows='10'>$default_value</textarea>";
+      } else {
+        return "<textarea name='" . static::get_attribute_name( $name, $class_name ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='large-text' cols='50' rows='10'>" . ( $default_value ? $default_value : $object->{$name} ) . "</textarea>";
       }
     }
 
