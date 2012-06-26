@@ -76,5 +76,39 @@ namespace WpMvc
         $class_name = $class_name_array[1];
       }
     }
+
+    public static function websafe_name( $input )
+    {
+      # Found below code at http://stackoverflow.com/questions/4783802/converting-string-into-web-safe-uri
+
+      $replace = array();
+      $delimiter = '';
+
+      $input = preg_replace( array( '/å/', '/ä/', '/ö/', '/Å/', '/Ä/', '/Ö/'), array( 'a', 'a', 'o', 'A', 'A', 'O'), $input );
+
+      if ( ! empty( $replace ) ) {
+        $input = str_replace( (array)$replace, ' ', $input );
+      }
+
+      $clean = iconv( 'UTF-8', 'ASCII//TRANSLIT', $input );
+      $clean = preg_replace( '/[^a-zA-Z0-9\/_|+ -]/', '', $clean );
+      $clean = strtolower( trim( $clean, '-' ) );
+      $clean = preg_replace( '/[\/_|+ -]+/', $delimiter, $clean );
+
+      return $clean;
+    }
+
+    public static function unique_identifier( $input )
+    {
+      $websafe_name = static::websafe_name( $input );
+
+      # Found below code at http://php.about.com/od/security/p/unique_id.htm
+
+      $c = uniqid( rand(), true );
+
+      $hash = md5( $websafe_name . $c );
+
+      return $hash;
+    }
   }
 }
