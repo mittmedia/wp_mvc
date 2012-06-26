@@ -14,7 +14,7 @@ namespace WpMvc
       $this->populate();
     }
 
-    public static function all()
+    public static function all( $get_relations = true )
     {
       global $wpdb;
 
@@ -30,7 +30,9 @@ namespace WpMvc
 
         $return_object->populate_fields( $result, $return_object );
 
-        $return_object->class_init();
+        if ( $get_relations ) {
+          $return_object->init_relations();
+        }
 
         array_push( $all, $return_object );
       }
@@ -38,7 +40,7 @@ namespace WpMvc
       return $all;
     }
 
-    public static function find( $id )
+    public static function find( $id, $get_relations = true )
     {
       global $wpdb;
 
@@ -56,7 +58,9 @@ namespace WpMvc
         trigger_error( "Couldn't find $id_column $id of $class in $table.", E_USER_ERROR );
       }
 
-      $return_object->class_init();
+      if ( $get_relations ) {
+        $return_object->init_relations();
+      }
 
       return $return_object;
     }
@@ -218,10 +222,10 @@ namespace WpMvc
       }
     }
 
-    private function class_init()
+    private function init_relations()
     {
-      if ( method_exists( $this, 'init' ) )
-        $this->init();
+      if ( method_exists( $this, 'init_relations' ) )
+        $this->init_relations();
     }
 
     private function create()

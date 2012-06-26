@@ -9,7 +9,7 @@ namespace WpMvc
     public static $id_column = 'ID';
     public $usermeta;
 
-    public function init()
+    public function init_relations()
     {
       static::has_many_user_meta();
     }

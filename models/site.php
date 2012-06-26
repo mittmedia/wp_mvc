@@ -9,7 +9,7 @@ namespace WpMvc
     public static $id_column = 'id';
     public $sitemeta;
 
-    public function init()
+    public function init_relations()
     {
       static::has_many_site_meta();
     }

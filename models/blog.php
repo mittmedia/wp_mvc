@@ -9,12 +9,7 @@ namespace WpMvc
     public static $id_column = 'blog_id';
     public $options;
 
-    public function init()
-    {
-      static::has_many_options();
-    }
-
-    private function has_many_options()
+    public function init_relations()
     {
       $options = Option::find_by_blog_id( $this->{static::$id_column} );
 

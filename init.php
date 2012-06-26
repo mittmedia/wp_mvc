@@ -14,6 +14,5 @@ require_once( 'wp_mvc-1.0.0/models/site.php' );
 require_once( 'wp_mvc-1.0.0/models/site_meta.php' );
 require_once( 'wp_mvc-1.0.0/models/user.php' );
 require_once( 'wp_mvc-1.0.0/models/user_meta.php' );
-require_once( 'wp_mvc-1.0.0/models/custom_footer.php' );
 
 require_once( 'wp_mvc-1.0.0/application.class.php' );
