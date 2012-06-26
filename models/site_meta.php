@@ -14,7 +14,7 @@ namespace WpMvc
 
       $table_name = static::$table_name;
 
-      $query = "SELECT * FROM $table_name WHERE site_id = $site_id;";
+      $query = "SELECT * FROM $table_name WHERE site_id = $site_id ORDER BY meta_id;";
 
       return self::query( $query );
     }
