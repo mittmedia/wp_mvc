@@ -72,14 +72,14 @@ namespace WpMvc
         case 'text':
           $html .= static::input_text( $name, $class_name, $object, $default_value, $key );
           break;
-        case 'select':
-          $html .= static::input_select( $name, $class_name, $object, $default_value, $key, $options );
-          break;
         case 'textarea':
           $html .= static::input_textarea( $name, $class_name, $object, $default_value, $key );
           break;
+        case 'select':
+          $html .= static::input_select( $name, $class_name, $default_value, $key, $options );
+          break;
         case 'checkboxes':
-          $html .= static::input_checkboxes( $name, $class_name, $object, $default_value, $key, $options );
+          $html .= static::input_checkboxes( $name, $class_name, $default_value, $key, $options );
           break;
       }
 
@@ -102,13 +102,13 @@ namespace WpMvc
     public static function input_textarea( $name, $class_name, $object, $default_value, $key )
     {
       if ( is_array( $class_name ) || is_array( $object ) ) {
-        return "<textarea name='" . static::get_attribute_name( $name, $class_name, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='large-text' cols='50' rows='10'>$default_value</textarea>";
+        return "<textarea name='" . static::get_attribute_name( $name, $class_name, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='large-text' rows='5' cols='30'>$default_value</textarea>";
       } else {
-        return "<textarea name='" . static::get_attribute_name( $name, $class_name ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='large-text' cols='50' rows='10'>" . ( $default_value ? $default_value : $object->{$name} ) . "</textarea>";
+        return "<textarea name='" . static::get_attribute_name( $name, $class_name ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='large-text' rows='5' cols='30'>" . ( $default_value ? $default_value : $object->{$name} ) . "</textarea>";
       }
     }
 
-    public static function input_select( $name, $class_name, $object, $default_value, $key, $options )
+    public static function input_select( $name, $class_name, $default_value, $key, $options )
     {
       $html = "<select name='" . static::get_attribute_name( $name, $class_name, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "'>";
 
@@ -121,7 +121,7 @@ namespace WpMvc
       return $html;
     }
 
-    public static function input_checkboxes( $name, $class_name, $object, $default_value, $key, $options )
+    public static function input_checkboxes( $name, $class_name, $default_value, $key, $options )
     {
       $html = "";
 
