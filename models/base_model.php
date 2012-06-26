@@ -155,6 +155,9 @@ namespace WpMvc
     {
       foreach ( $post as $post_key => $post_value ) {
         if ( is_array( $post_value ) ) {
+          if ( count( $post_value ) == 0 )
+            return;
+
           array_push( $key_array, $post_key );
 
           $this->iterate_post_keys_and_populate( $post_value, $maintain_post, $key_array );
@@ -177,6 +180,10 @@ namespace WpMvc
               $this->assign_array_depth5( $key_array, $maintain_post, $post_value );
               $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
               break;
+            case '6':
+              $this->assign_array_depth6( $key_array, $maintain_post, $post_value );
+              $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
+              break;
           }
         }
       }
@@ -186,6 +193,7 @@ namespace WpMvc
     {
       unset( $maintain_post[$key_array[0]] );
       $this->{$key_array[0]}->{$key_array[1]} = $value;
+      $key_array = null;
       $key_array = array();
     }
 
@@ -193,6 +201,7 @@ namespace WpMvc
     {
       unset( $maintain_post[$key_array[0]][$key_array[1]] );
       $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]} = $value;
+      $key_array = null;
       $key_array = array();
     }
 
@@ -200,6 +209,7 @@ namespace WpMvc
     {
       unset( $maintain_post[$key_array[0]][$key_array[1]][$key_array[2]] );
       $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]} = $value;
+      $key_array = null;
       $key_array = array();
     }
 
@@ -207,6 +217,15 @@ namespace WpMvc
     {
       unset( $maintain_post[$key_array[0]][$key_array[1]][$key_array[2]][$key_array[3]] );
       $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]}->{$key_array[4]} = $value;
+      $key_array = null;
+      $key_array = array();
+    }
+
+    private function assign_array_depth6( &$key_array, &$maintain_post, $value )
+    {
+      unset( $maintain_post[$key_array[0]][$key_array[1]][$key_array[2]][$key_array[3]][$key_array[4]] );
+      $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]}->{$key_array[4]}->{$key_array[5]} = $value;
+      $key_array = null;
       $key_array = array();
     }
 
