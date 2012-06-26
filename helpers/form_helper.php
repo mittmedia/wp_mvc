@@ -36,7 +36,9 @@ namespace WpMvc
 
         isset( $value['options'] ) ? $options = $value['options'] : $options = null;
 
-        if ( isset( $value['object'] ) ) {
+        if ( $type == 'spacer' ) {
+          $html .= "<tr class='spacer'><th><!-- --></th><td><!-- --></td></tr>";
+        } else if ( isset( $value['object'] ) ) {
           $sub_object = $value['object'];
           $sub_class_name = get_class( $sub_object );
           $sub_class_name_lowered = strtolower( $sub_class_name );
