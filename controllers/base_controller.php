@@ -26,7 +26,12 @@ namespace WpMvc
 
     public static function redirect_to( $url )
     {
-      echo "<meta http-equiv='refresh' content='0; URL=$url' />";
+      $url_and = implode( '&', array_unique( explode( '&', $url ) ) );
+      $url_question = implode( '&', array_unique( explode( '&', $url_and ) ) );
+
+      echo "<meta http-equiv='refresh' content='0; URL=$url_question' />";
+
+      die;
     }
   }
 }
