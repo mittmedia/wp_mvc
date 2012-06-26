@@ -31,7 +31,7 @@ namespace WpMvc
         $return_object->populate_fields( $result, $return_object );
 
         if ( $get_relations ) {
-          $return_object->init_relations();
+          $return_object->init_class_relations();
         }
 
         array_push( $all, $return_object );
@@ -59,7 +59,7 @@ namespace WpMvc
       }
 
       if ( $get_relations ) {
-        $return_object->init_relations();
+        $return_object->init_class_relations();
       }
 
       return $return_object;
@@ -222,7 +222,7 @@ namespace WpMvc
       }
     }
 
-    private function init_relations()
+    private function init_class_relations()
     {
       if ( method_exists( $this, 'init_relations' ) )
         $this->init_relations();
