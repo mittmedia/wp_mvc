@@ -36,13 +36,17 @@ namespace WpMvc
 
         isset( $value['options'] ) ? $options = $value['options'] : $options = null;
 
-        if ( $type == 'spacer' ) {
-          $html .= "<tr class='spacer'><th><!-- --></th><td><!-- --></td></tr>";
-        } else if ( isset( $value['object'] ) ) {
+        if ( isset( $value['object'] ) ) {
           $sub_object = $value['object'];
           $sub_class_name = get_class( $sub_object );
           $sub_class_name_lowered = strtolower( $sub_class_name );
+        }
 
+        if ( $type == 'delete_action' ) {
+          $html .= "<tr class='action'><th><!-- --></th><td><input type='submit' name='delete_action[" . static::get_attribute_name( $name, array( $class_name_lowered, $sub_class_name_lowered ), $key ) . "]' id='test' value='" . __( 'Delete' ) . "' /></td></tr>";
+        } else if ( $type == 'spacer' ) {
+          $html .= "<tr class='spacer'><th><!-- --></th><td><!-- --></td></tr>";
+        } else if ( isset( $value['object'] ) ) {
           $html .= static::form_element( $title, $name, $type, array( $class_name_lowered, $sub_class_name_lowered ), array( $object, $sub_object ), $default_value, $key, $options );
         } else {
           $html .= static::form_element( $title, $name, $type, $class_name_lowered, $object, null, null, $options );
