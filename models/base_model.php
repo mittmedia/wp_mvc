@@ -164,27 +164,28 @@ namespace WpMvc
         } else {
           array_push( $key_array, $post_key );
 
-          switch ( count( $key_array ) ) {
+          $key_array_length = count( $key_array );
+
+          switch ( $key_array_length ) {
             case '2':
               $this->assign_array_depth2( $key_array, $maintain_post, $post_value );
               break;
             case '3':
               $this->assign_array_depth3( $key_array, $maintain_post, $post_value );
-              $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
               break;
             case '4':
               $this->assign_array_depth4( $key_array, $maintain_post, $post_value );
-              $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
               break;
             case '5':
               $this->assign_array_depth5( $key_array, $maintain_post, $post_value );
-              $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
               break;
             case '6':
               $this->assign_array_depth6( $key_array, $maintain_post, $post_value );
-              $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
               break;
           }
+
+          if ( $key_array_length > 2 )
+            $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
         }
       }
     }
