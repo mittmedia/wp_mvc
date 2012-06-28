@@ -102,7 +102,8 @@ namespace WpMvc
     public function takes_post( $post )
     {
       $key_array = array();
-      $this->iterate_post_keys_and_populate( $post, $key_array );
+      $depth = 0;
+      $this->iterate_post_keys_and_populate( $post, $key_array, $depth );
     }
 
     public function save()
@@ -177,24 +178,46 @@ namespace WpMvc
         $return_object ? $return_object->{$field} = $value : $this->{$field} = $value;
     }
 
-    private function iterate_post_keys_and_populate( &$post, &$key_array )
-    {
-      \WpMvc\DevHelper::dump( $key_array ); echo '<hr/>';
 
-      $this->add_post_key_to_key_array( $post, $key_array );
-    }
-
-    private function add_post_key_to_key_array( $post, &$key_array )
+    private function iterate_post_keys_and_populate( $post, &$key_array, $depth )
     {
       foreach ( $post as $post_key => $post_value ) {
-        if ( is_array( $post_value ) ) {
-          $key_array[] = $post_key;
-
-          $this->iterate_post_keys_and_populate( $post_value, $key_array );
+        if(is_array($post_value)) {
+          $depth++;
+          if (isset($post_value['delete_action'])) {
+            $post_value['delete_action'] = true;
+          }
+          array_push($key_array, $post_key);
+          $this->iterate_post_keys_and_populate( $post_value, &$key_array, $depth );
+          array_pop($key_array);
         } else {
-          $key_array = array();
+          array_push($key_array, $post_key);
+
+          switch (count($key_array)) {
+            case 0:
+              echo "1";
+              break; 
+            case 1:
+            echo "2";
+              break; 
+            case 2:
+            echo "3";
+              break; 
+            case 3:
+              $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]} = $post_value;
+              break; 
+            case 4:
+              $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]}  = $post_value;
+              break; 
+            case 4:
+              break; 
+            case 5:
+              break; 
+          }
+          array_pop($key_array);
         }
       }
+      $depth = 0;
     }
 
     #private function add_to_object( parent,  )
