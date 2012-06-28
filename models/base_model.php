@@ -132,21 +132,7 @@ namespace WpMvc
 
     public function delete()
     {
-      //\Wpmvc\DevHelper::dump( $this->{static::$id_column} );
 
-      #die;
-      /*
-      $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
-
-      $object_array = array();
-
-      $this->iterate_object_for_method_save( $this, $object_array );
-
-      foreach ( $object_array as $object ) {
-        $object->save();
-      }
-
-      return $id;*/
     }
 
     protected function validate()
@@ -182,26 +168,30 @@ namespace WpMvc
     private function iterate_post_keys_and_populate( $post, &$key_array, $depth )
     {
       foreach ( $post as $post_key => $post_value ) {
-        if(is_array($post_value)) {
+        if( is_array( $post_value ) ) {
           $depth++;
-          if (isset($post_value['delete_action'])) {
+          
+          if ( isset( $post_value['delete_action'] ) ) {
             $post_value['delete_action'] = true;
           }
-          array_push($key_array, $post_key);
+          
+          array_push( $key_array, $post_key );
+          
           $this->iterate_post_keys_and_populate( $post_value, &$key_array, $depth );
-          array_pop($key_array);
+          
+          array_pop( $key_array );
         } else {
-          array_push($key_array, $post_key);
+          array_push( $key_array, $post_key );
 
-          switch (count($key_array)) {
+          switch ( count( $key_array ) ) {
             case 0:
               echo "1";
               break; 
             case 1:
-            echo "2";
+              echo "2";
               break; 
             case 2:
-            echo "3";
+              echo "3";
               break; 
             case 3:
               $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]} = $post_value;
@@ -214,17 +204,13 @@ namespace WpMvc
             case 5:
               break; 
           }
-          array_pop($key_array);
+
+          array_pop( $key_array );
         }
       }
+      
       $depth = 0;
     }
-
-    #private function add_to_object( parent,  )
-    #{
-    #  $key_array[] = $post_key;
-    #}
-
 
     private function iterate_object_for_method_save( $object, &$object_array )
     {
