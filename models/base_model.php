@@ -102,14 +102,21 @@ namespace WpMvc
     public function takes_post( $post )
     {
       $key_array = array();
-      $this->iterate_post_keys_and_populate( $post, $post, $key_array );
+      $this->iterate_post_keys_and_populate( $post, $key_array );
     }
 
     public function save()
     {
+      //\Wpmvc\DevHelper::dump( $this );
+
+      //echo '<hr/>';
+
       $this->validate();
 
-      $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
+      if ( $this )
+        $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
+      else
+        $this->delete();
 
       $object_array = array();
 
@@ -120,6 +127,25 @@ namespace WpMvc
       }
 
       return $id;
+    }
+
+    public function delete()
+    {
+      //\Wpmvc\DevHelper::dump( $this->{static::$id_column} );
+
+      #die;
+      /*
+      $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
+
+      $object_array = array();
+
+      $this->iterate_object_for_method_save( $this, $object_array );
+
+      foreach ( $object_array as $object ) {
+        $object->save();
+      }
+
+      return $id;*/
     }
 
     protected function validate()
@@ -151,84 +177,31 @@ namespace WpMvc
         $return_object ? $return_object->{$field} = $value : $this->{$field} = $value;
     }
 
-    private function iterate_post_keys_and_populate( $post, $maintain_post, &$key_array )
+    private function iterate_post_keys_and_populate( &$post, &$key_array )
+    {
+      \WpMvc\DevHelper::dump( $key_array ); echo '<hr/>';
+
+      $this->add_post_key_to_key_array( $post, $key_array );
+    }
+
+    private function add_post_key_to_key_array( $post, &$key_array )
     {
       foreach ( $post as $post_key => $post_value ) {
         if ( is_array( $post_value ) ) {
-          if ( count( $post_value ) == 0 )
-            return;
+          $key_array[] = $post_key;
 
-          array_push( $key_array, $post_key );
-
-          $this->iterate_post_keys_and_populate( $post_value, $maintain_post, $key_array );
+          $this->iterate_post_keys_and_populate( $post_value, $key_array );
         } else {
-          array_push( $key_array, $post_key );
-
-          $key_array_length = count( $key_array );
-
-          switch ( $key_array_length ) {
-            case '2':
-              $this->assign_array_depth2( $key_array, $maintain_post, $post_value );
-              break;
-            case '3':
-              $this->assign_array_depth3( $key_array, $maintain_post, $post_value );
-              break;
-            case '4':
-              $this->assign_array_depth4( $key_array, $maintain_post, $post_value );
-              break;
-            case '5':
-              $this->assign_array_depth5( $key_array, $maintain_post, $post_value );
-              break;
-            case '6':
-              $this->assign_array_depth6( $key_array, $maintain_post, $post_value );
-              break;
-          }
-
-          if ( $key_array_length > 2 )
-            $this->iterate_post_keys_and_populate( $maintain_post, $maintain_post, $key_array );
+          $key_array = array();
         }
       }
     }
 
-    private function assign_array_depth2( &$key_array, &$maintain_post, $value )
-    {
-      unset( $maintain_post[$key_array[0]] );
-      $this->{$key_array[0]}->{$key_array[1]} = $value;
-      $key_array = null;
-      $key_array = array();
-    }
+    #private function add_to_object( parent,  )
+    #{
+    #  $key_array[] = $post_key;
+    #}
 
-    private function assign_array_depth3( &$key_array, &$maintain_post, $value )
-    {
-      unset( $maintain_post[$key_array[0]][$key_array[1]] );
-      $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]} = $value;
-      $key_array = null;
-      $key_array = array();
-    }
-
-    private function assign_array_depth4( &$key_array, &$maintain_post, $value )
-    {
-      unset( $maintain_post[$key_array[0]][$key_array[1]][$key_array[2]] );
-      $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]} = $value;
-      $key_array = null;
-      $key_array = array();
-    }
-
-    private function assign_array_depth5( &$key_array, &$maintain_post, $value )
-    {
-      unset( $maintain_post[$key_array[0]][$key_array[1]][$key_array[2]][$key_array[3]] );
-      $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]}->{$key_array[4]} = $value;
-      $key_array = null;
-      $key_array = array();
-    }
-
-    private function assign_array_depth6( &$key_array, &$maintain_post, $value )
-    {
-      unset( $maintain_post[$key_array[0]][$key_array[1]][$key_array[2]][$key_array[3]][$key_array[4]] );
-      $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]}->{$key_array[4]}->{$key_array[5]} = $value;
-      $key_array = null;
-      $key_array = array();
-    }
 
     private function iterate_object_for_method_save( $object, &$object_array )
     {

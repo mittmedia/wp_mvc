@@ -45,7 +45,7 @@ namespace WpMvc
         if ( $type == 'delete_action' ) {
           $html_class_and_id = static::get_attribute_id( $name, array( $class_name_lowered, $sub_class_name_lowered ), $key );
 
-          $html .= "<tr class='action $html_class_and_id'><th><!-- --></th><td><input type='button' name='delete_action[" . static::get_attribute_name( $name, array( $class_name_lowered, $sub_class_name_lowered ), $key ) . "]' id='delete_action_{$html_class_and_id}' class='delete_action' value='$title' /></td></tr>";
+          $html .= "<tr class='action $html_class_and_id'><th><!-- --></th><td><input type='button' name='" . static::get_attribute_name( $name, array( $class_name_lowered, $sub_class_name_lowered ), $key ) . "[delete_action]' id='{$html_class_and_id}_delete_action' class='delete_action' value='$title' /></td></tr>";
         } else if ( $type == 'spacer' ) {
           $html .= "<tr class='spacer'><th><!-- --></th><td><!-- --></td></tr>";
         } else if ( isset( $value['object'] ) ) {
