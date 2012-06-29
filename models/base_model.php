@@ -108,17 +108,6 @@ namespace WpMvc
 
     public function save()
     {
-      //\Wpmvc\DevHelper::dump( $this );
-
-      //echo '<hr/>';
-
-      $this->validate();
-
-      if ( $this )
-        $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
-      else
-        $this->delete();
-
       $object_array = array();
 
       $this->iterate_object_for_method_save( $this, $object_array );
@@ -127,12 +116,30 @@ namespace WpMvc
         $object->save();
       }
 
-      return $id;
+      if ( isset( $this->delete_action ) ) {
+        $this->delete();
+
+        echo '1!';
+      } else {
+        $this->validate();
+
+        $this->{static::$id_column} ? $id = $this->update() : $id = $this->create();
+
+        return $id;
+      }
     }
 
     public function delete()
     {
+      global $wpdb;
 
+      $table_name = static::$table_name;
+      $id_column = static::$id_column;
+      $id = $this->{static::$id_column};
+
+      $wpdb->query( $wpdb->prepare( "DELETE FROM $table_name WHERE $id_column = %s", $id ) );
+
+      return $id_column;
     }
 
     protected function validate()
@@ -208,7 +215,7 @@ namespace WpMvc
           array_pop( $key_array );
         }
       }
-      
+
       $depth = 0;
     }
 
@@ -246,19 +253,20 @@ namespace WpMvc
       global $wpdb;
 
       $table_name = static::$table_name;
-      $id_column = $this->{static::$id_column};
+      $id_column = static::$id_column;
+      $id = $this->{static::$id_column};
 
       $wpdb->update(
         $table_name,
         $this->as_db_array(),
         array(
-          static::$id_column => $id_column
+          $id_column => $id
         ), 
         array(), 
         array() 
       );
 
-      return $id_column;
+      return $id;
     }
 
     private function as_db_array()
