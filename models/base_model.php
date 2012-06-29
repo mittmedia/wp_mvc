@@ -118,8 +118,6 @@ namespace WpMvc
 
       if ( isset( $this->delete_action ) ) {
         $this->delete();
-
-        echo '1!';
       } else {
         $this->validate();
 
