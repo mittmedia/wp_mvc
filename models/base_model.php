@@ -55,7 +55,7 @@ namespace WpMvc
       if ( $results ) {
         $return_object->populate_fields( $results[0], $return_object );
       } else {
-        trigger_error( "Couldn't find $id_column $id of $class in $table.", E_USER_ERROR );
+        throw new \Exception( "Couldn't find $id_column $id of $class_name in $table_name.", E_USER_ERROR );
       }
 
       if ( $get_relations ) {
@@ -84,7 +84,7 @@ namespace WpMvc
           array_push( $all, $return_object );
         }
       } else {
-        trigger_error( "Nothing found on \"$query\".", E_USER_ERROR );
+        throw new \Exception( "Nothing found on \"$query\".", E_USER_ERROR );
       }
       
       return $all;
