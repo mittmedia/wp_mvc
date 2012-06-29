@@ -43,9 +43,19 @@ namespace WpMvc
         }
 
         if ( $type == 'delete_action' ) {
-          $html_class_and_id = static::get_attribute_id( $name, array( $class_name_lowered, $sub_class_name_lowered ), $key );
+          $delete_objects = $value['delete_objects'];
 
-          $html .= "<tr class='action $html_class_and_id'><th><!-- --></th><td><input type='button' name='" . static::get_attribute_name( $name, array( $class_name_lowered, $sub_class_name_lowered ), $key ) . "[delete_action]' id='{$html_class_and_id}_delete_action' class='delete_action' value='$title' /></td></tr>";
+          $html_class_and_id = static::get_attribute_id( $delete_objects[0], array( $class_name_lowered, $sub_class_name_lowered ), $key );
+
+          $delete_objects_attributes = "";
+
+          foreach ( $delete_objects as $delete_objects_item ) {
+            $delete_objects_attributes .= static::get_attribute_name( $delete_objects_item, array( $class_name_lowered, $sub_class_name_lowered ), $key ) . "[delete_action],";
+          }
+
+          $delete_objects = substr($delete_objects_attributes, 0, -1);
+
+          $html .= "<tr class='action $html_class_and_id'><th><!-- --></th><td><input type='button' data-id='{$delete_objects_attributes}' class='delete_action' value='$title' /></td></tr>";
         } else if ( $type == 'spacer' ) {
           $html .= "<tr class='spacer'><th><!-- --></th><td><!-- --></td></tr>";
         } else if ( isset( $value['object'] ) ) {
