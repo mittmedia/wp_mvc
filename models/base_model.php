@@ -169,18 +169,6 @@ namespace WpMvc
         $return_object ? $return_object->{$field} = $value : $this->{$field} = $value;
     }
 
-    protected function as_db_array()
-    {
-      $return_array = array();
-
-      foreach ( $this->db_columns as $db_column ) {
-        if ( $this->{$db_column->Field} || $this->{$db_column->Field} == 0 ) {
-          $return_array[$db_column->Field] = $this->{$db_column->Field};
-        }
-      }
-
-      return $return_array;
-    }
 
     private function iterate_post_keys_and_populate( $post, &$key_array, $depth )
     {
@@ -277,6 +265,19 @@ namespace WpMvc
       );
 
       return $id;
+    }
+
+    private function as_db_array()
+    {
+      $return_array = array();
+
+      foreach ( $this->db_columns as $db_column ) {
+        if ( $this->{$db_column->Field} || $this->{$db_column->Field} == 0 ) {
+          $return_array[$db_column->Field] = $this->{$db_column->Field};
+        }
+      }
+
+      return $return_array;
     }
   }
 }
