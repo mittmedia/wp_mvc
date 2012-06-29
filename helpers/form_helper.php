@@ -132,9 +132,16 @@ namespace WpMvc
     {
       $html = "<select name='" . static::get_attribute_name( $name, $class_name, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "'>";
 
-      foreach ( $options as $option ) {
-        $html .= "<option " . ( $option == $default_value ? "selected='selected'" : "" ) . ">$option</option>";
+      if ( static::is_associative_array( $options ) ) {
+        foreach ( $options as $option_key => $option_value ) {
+          $html .= "<option value='{$option_key}' " . ( $option_value == $default_value ? "selected='selected'" : "" ) . ">$option_value</option>";
+        }
+      } else {
+        foreach ( $options as $option ) {
+          $html .= "<option " . ( $option == $default_value ? "selected='selected'" : "" ) . ">$option</option>";
+        }
       }
+      
 
       $html .= "</select>";
 
@@ -184,6 +191,16 @@ namespace WpMvc
 
         return "{$class_name}_{$name}" . ( $key ? "_{$key}" : '' );
       }
+    }
+
+    private static function is_associative_array( $arr )
+    {
+      # Function found at http://stackoverflow.com/questions/173400/php-arrays-a-good-way-to-check-if-an-array-is-associative-or-numeric
+
+      if ( ! is_array( $arr ) )
+        return false;
+
+      return array_keys( $arr ) !== range( 0, count( $arr ) - 1 );
     }
   }
 }
