@@ -18,5 +18,16 @@ namespace WpMvc
 
       return self::query( $query );
     }
+
+    public static function find_by_meta_key( $meta_key )
+    {
+      global $wpdb;
+
+      $table_name = static::$table_name;
+
+      $query = "SELECT * FROM $table_name WHERE meta_key = '$meta_key' ORDER BY meta_id;";
+
+      return self::query( $query );
+    }
   }
 }
