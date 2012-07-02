@@ -42,7 +42,9 @@ namespace WpMvc
           $sub_class_name_lowered = strtolower( $sub_class_name );
         }
 
-        if ( $type == 'delete_action' ) {
+        if ( $type == 'h3' ) {
+          $html .= "</tbody></table><h3>$title</h3><tbody><table class='form-table'>";
+        } else if ( $type == 'delete_action' ) {
           $delete_objects = $value['delete_objects'];
 
           $html_class_and_id = static::get_attribute_id( $delete_objects[0], array( $class_name_lowered, $sub_class_name_lowered ), $key );
