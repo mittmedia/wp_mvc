@@ -24,6 +24,7 @@ namespace WpMvc
         $key = null;
         $options = null;
 
+
         isset( $value['title'] ) ? $title = $value['title'] : $title = null;
 
         isset( $value['name'] ) ? $name = $value['name'] : $name = null;
@@ -67,9 +68,7 @@ namespace WpMvc
 
       $html .= "</tbody>";
       $html .= "</table>";
-
       $html .= static::default_actions( $verb );
-
       $html .= "</form>";
 
       echo $html;
@@ -92,8 +91,11 @@ namespace WpMvc
         case 'text':
           $html .= static::input_text( $name, $class_name, $object, $default_value, $key );
           break;
+        case 'editor_textarea':
+            $html .= static::input_editor_textarea( $name, $class_name, $object, $default_value, $key );
+          break;
         case 'textarea':
-          $html .= static::input_textarea( $name, $class_name, $object, $default_value, $key );
+            $html .= static::input_textarea( $name, $class_name, $object, $default_value, $key );
           break;
         case 'select':
           $html .= static::input_select( $name, $class_name, $default_value, $key, $options );
@@ -121,11 +123,50 @@ namespace WpMvc
 
     public static function input_textarea( $name, $class_name, $object, $default_value, $key )
     {
+
+      $html = "";
+
       if ( is_array( $class_name ) || is_array( $object ) ) {
-        return "<textarea name='" . static::get_attribute_name( $name, $class_name, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='large-text' rows='5' cols='30'>$default_value</textarea>";
+          $html .= "<textarea name='" . static::get_attribute_name( $name, $class_name, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='large-text' rows='5' cols='30'>$default_value</textarea>";
       } else {
-        return "<textarea name='" . static::get_attribute_name( $name, $class_name ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='large-text' rows='5' cols='30'>" . ( $default_value ? $default_value : $object->{$name} ) . "</textarea>";
+          $html .= "<textarea name='" . static::get_attribute_name( $name, $class_name ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='large-text' rows='5' cols='30'>" . ( $default_value ? $default_value : $object->{$name} ) . "</textarea>";
       }
+
+      return $html;
+    }
+
+    public static function input_editor_textarea( $name, $class_name, $object, $default_value, $key )
+    {
+      $html = "";
+      ob_start();
+      if ( is_array( $class_name ) || is_array( $object ) ) {
+        $settings = array(
+          'quicktags' => array(
+            'buttons' => 'em,strong,link'
+          ),
+          'text_area_name' => static::get_attribute_name( $name, $class_name, $key ),
+          'quicktags' => true,
+          'tinymce' => true
+        );
+        wp_editor( $default_value, static::get_attribute_name( $name, $class_name, $key ), $settings );
+      } else {
+        $settings = array(
+          'quicktags' => array(
+            'buttons' => 'em,strong,link'
+          ),
+          'text_area_name' => static::get_attribute_name( $name, $class_name ),
+          'quicktags' => true,
+          'tinymce' => true
+        );
+        wp_editor( $default_value, static::get_attribute_name( $name, $class_name ), $settings );
+      }
+
+
+
+      $html .= ob_get_contents();
+      ob_end_clean();
+
+      return $html;
     }
 
     public static function input_select( $name, $class_name, $default_value, $key, $options )
@@ -141,7 +182,7 @@ namespace WpMvc
           $html .= "<option " . ( $option == $default_value ? "selected='selected'" : "" ) . ">$option</option>";
         }
       }
-      
+
 
       $html .= "</select>";
 

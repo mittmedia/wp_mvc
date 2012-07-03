@@ -5,7 +5,7 @@ namespace WpMvc
   class Application
   {
     private $application_namespace;
-    private $application_path;
+    public $application_path;
 
     public function init( $namespace, $path )
     {
