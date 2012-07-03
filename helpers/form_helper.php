@@ -94,7 +94,7 @@ namespace WpMvc
           $html .= static::input_text( $name, $class_name, $object, $default_value, $key );
           break;
         case 'editor_textarea':
-            $html .= static::input_editor_textarea( $name, $class_name, $object, $default_value, $key );
+          $html .= static::input_editor_textarea( $name, $class_name, $object, $default_value, $key );
           break;
         case 'textarea':
             $html .= static::input_textarea( $name, $class_name, $object, $default_value, $key );
