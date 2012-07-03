@@ -21,9 +21,9 @@ namespace WpMvc
         $name = null;
         $type = null;
         $default_value = null;
+        $description = null;
         $key = null;
         $options = null;
-
 
         isset( $value['title'] ) ? $title = $value['title'] : $title = null;
 
@@ -32,6 +32,8 @@ namespace WpMvc
         isset( $value['type'] ) ? $type = $value['type'] : $type = null;
 
         isset( $value['default_value'] ) ? $default_value = $value['default_value'] : $default_value = null;
+
+        isset( $value['description'] ) ? $description = $value['description'] : $description = null;
 
         isset( $value['key'] ) ? $key = $value['key'] : $key = null;
 
@@ -62,9 +64,9 @@ namespace WpMvc
         } else if ( $type == 'spacer' ) {
           $html .= "<tr class='spacer'><th><!-- --></th><td><!-- --></td></tr>";
         } else if ( isset( $value['object'] ) ) {
-          $html .= static::form_element( $title, $name, $type, array( $class_name_lowered, $sub_class_name_lowered ), array( $object, $sub_object ), $default_value, $key, $options );
+          $html .= static::form_element( $title, $name, $type, array( $class_name_lowered, $sub_class_name_lowered ), array( $object, $sub_object ), $default_value, $description, $key, $options );
         } else {
-          $html .= static::form_element( $title, $name, $type, $class_name_lowered, $object, null, null, $options );
+          $html .= static::form_element( $title, $name, $type, $class_name_lowered, $object, null, null, null, $options );
         }
       }
 
@@ -76,7 +78,7 @@ namespace WpMvc
       echo $html;
     }
 
-    public static function form_element( $title, $name, $type, $class_name, $object, $default_value = null, $key = null, $options = null )
+    public static function form_element( $title, $name, $type, $class_name, $object, $default_value = null, $description, $key = null, $options = null )
     {
       $html_class = static::get_attribute_id( $name, $class_name );
 
@@ -106,6 +108,9 @@ namespace WpMvc
           $html .= static::input_checkboxes( $name, $class_name, $default_value, $key, $options );
           break;
       }
+
+      if ( $description )
+        $html .= "<br />$description";
 
       $html .= "</td>";
       $html .= "</tr>";
