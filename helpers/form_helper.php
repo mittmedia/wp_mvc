@@ -9,7 +9,7 @@ namespace WpMvc
       if ( $action == null )
         $action = $_SERVER['REQUEST_URI'];
 
-      $html = "<form action='$action' method='post'>";
+      $html = "<form action='$action' method='post' enctype='multipart/form-data'>";
       $html .= "<table class='form-table'>";
       $html .= "<tbody>";
 
@@ -107,6 +107,9 @@ namespace WpMvc
         case 'checkboxes':
           $html .= static::input_checkboxes( $name, $class_name, $default_value, $key, $options );
           break;
+        case 'file':
+          $html .= static::input_file( $name, $class_name, $object, $default_value, $key );
+          break;
       }
 
       if ( $description )
@@ -139,6 +142,15 @@ namespace WpMvc
       }
 
       return $html;
+    }
+
+    public static function input_file( $name, $class_name, $object, $default_value, $key )
+    {
+      if ( is_array( $class_name ) || is_array( $object ) ) {
+        return "<input type='file' name='" . static::get_attribute_name( $name, $class_name, $key ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='regular-text' value='$default_value' />";
+      } else {
+        return "<input type='file' name='" . static::get_attribute_name( $name, $class_name ) . "' id='" . static::get_attribute_id( $name, $class_name ) . "' class='regular-text' value='" . ( $default_value ? $default_value : $object->{$name} ) . "' />";
+      }
     }
 
     public static function input_editor_textarea( $name, $class_name, $object, $default_value, $key )
