@@ -17,7 +17,7 @@ namespace WpMvc
 
       $controller_name = \WpMvc\ApplicationHelper::rename_controller_class_to_file_without_namespace( $controller_class );
       $controller_dir = preg_replace( '/_controller/', '', $controller_name );
-      $action_file = $action . '.php';
+      $action_file = $action . '.html.php';
 
       $full_path = $this->application_path . '/views/' . $controller_dir . '/' . $action_file;
 

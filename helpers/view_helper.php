@@ -20,7 +20,7 @@ namespace WpMvc
     public static function render_template( $path, $template_object )
     {
       $template_path_splitted = explode( '/', $path );
-      $template_name = array_pop( $template_path_splitted ) . '.php';
+      $template_name = array_pop( $template_path_splitted ) . '.html.php';
       $template_path = \WpMvc\Config::$application_path;
       $template_path .= '/views/';
       $template_path .= implode( '/', $template_path_splitted );
