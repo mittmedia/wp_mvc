@@ -7,7 +7,7 @@ namespace WpMvc
     public static function render_partial( $path )
     {
       $partial_path_splitted = explode( '/', $path );
-      $partial_name = '_' . array_pop( $partial_path_splitted ) . '.php';
+      $partial_name = '_' . array_pop( $partial_path_splitted ) . '.html.php';
       $partial_path = \WpMvc\Config::$application_path;
       $partial_path .= '/views/';
       $partial_path .= implode( '/', $partial_path_splitted );
@@ -35,6 +35,19 @@ namespace WpMvc
       $html = <<<html
 
 <div class="updated">
+  <p>$message</p>
+</div>
+
+html;
+
+      return $html;
+    }
+
+    public static function admin_error( $message )
+    {
+      $html = <<<html
+
+<div class="error">
   <p>$message</p>
 </div>
 
