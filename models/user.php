@@ -22,5 +22,16 @@ namespace WpMvc
         $this->usermeta->{$meta_item->meta_key} = $meta_item;
       }
     }
+
+    public static function find_by_email($email)
+    {
+      global $wpdb;
+
+      $table_name = static::$table_name;
+
+      $query = "SELECT * FROM $table_name WHERE user_email = '$email' ORDER BY ID;";
+
+      return self::query( $query );
+    }
   }
 }

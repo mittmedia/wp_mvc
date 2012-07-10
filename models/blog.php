@@ -17,6 +17,17 @@ namespace WpMvc
         $this->options->{$option->option_name} = $option;
       }
     }
+
+    public static function find_by_path($path)
+    {
+      global $wpdb;
+
+      $table_name = static::$table_name;
+
+      $query = "SELECT * FROM $table_name WHERE path = '$path' ORDER BY blog_id;";
+
+      return self::query( $query );
+    }
   }
 }
 
