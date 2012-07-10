@@ -21,6 +21,8 @@ namespace WpMvc
     {
       $path = $this->application_path . '/controllers';
 
+
+
       if ( is_dir( $path ) ) {
         $controller_iterator = $this->create_dir_iterator( $path );
         $this->iterate_dir_and_include( $controller_iterator );
@@ -50,7 +52,7 @@ namespace WpMvc
 
     private function create_dir_iterator( $path )
     {
-      return new \RecursiveIteratorIterator( new \RecursiveDirectoryIterator( $path ), 
+      return new \RecursiveIteratorIterator( new \RecursiveDirectoryIterator( $path ),
         \RecursiveIteratorIterator::CHILD_FIRST );
     }
 

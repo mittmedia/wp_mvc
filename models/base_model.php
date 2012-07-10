@@ -40,6 +40,32 @@ namespace WpMvc
       return $all;
     }
 
+
+    public static function find_by_name( $name, $get_relations = true )
+    {
+      global $wpdb;
+
+      $table_name = static::$table_name;
+      $name_column = static::$name_column;
+      $class_name = static::$class_name;
+
+      $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE $name_column = %s LIMIT 1;", $name ) );
+
+      $return_object = new $class_name();
+
+      if ( $results ) {
+        $return_object->populate_fields( $results[0], $return_object );
+      } else {
+        throw new \Exception( "Couldn't find $id_column $id of $class_name in $table_name.", E_USER_ERROR );
+      }
+
+      if ( $get_relations ) {
+        $return_object->init_class_relations();
+      }
+
+      return $return_object;
+    }
+
     public static function find( $id, $get_relations = true )
     {
       global $wpdb;
@@ -78,7 +104,7 @@ namespace WpMvc
       if ( $results ) {
         foreach ( $results as $result ) {
           $return_object = new $class_name();
-          
+
           $return_object->populate_fields( $result, $return_object );
 
           array_push( $all, $return_object );
@@ -86,7 +112,7 @@ namespace WpMvc
       } else {
         throw new \Exception( "Nothing found on \"$query\".", E_USER_ERROR );
       }
-      
+
       return $all;
     }
 
@@ -175,15 +201,15 @@ namespace WpMvc
       foreach ( $post as $post_key => $post_value ) {
         if( is_array( $post_value ) ) {
           $depth++;
-          
+
           if ( isset( $post_value['delete_action'] ) ) {
             $post_value['delete_action'] = true;
           }
-          
+
           array_push( $key_array, $post_key );
-          
+
           $this->iterate_post_keys_and_populate( $post_value, &$key_array, $depth );
-          
+
           array_pop( $key_array );
         } else {
           array_push( $key_array, $post_key );
@@ -191,23 +217,23 @@ namespace WpMvc
           switch ( count( $key_array ) ) {
             case 0:
               echo "1";
-              break; 
+              break;
             case 1:
               echo "2";
-              break; 
+              break;
             case 2:
               echo "3";
-              break; 
+              break;
             case 3:
               $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]} = $post_value;
-              break; 
+              break;
             case 4:
               $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]}  = $post_value;
-              break; 
+              break;
             case 4:
-              break; 
+              break;
             case 5:
-              break; 
+              break;
           }
 
           array_pop( $key_array );
@@ -259,9 +285,9 @@ namespace WpMvc
         $this->as_db_array(),
         array(
           $id_column => $id
-        ), 
-        array(), 
-        array() 
+        ),
+        array(),
+        array()
       );
 
       return $id;
