@@ -55,7 +55,7 @@ namespace WpMvc
       if ( $results ) {
         $return_object->populate_fields( $results[0], $return_object );
       } else {
-        throw new \Exception( "Couldn't find $id_column $id of $class_name in $table_name.", E_USER_ERROR );
+        return false;
       }
 
       if ( $get_relations ) {
@@ -78,15 +78,15 @@ namespace WpMvc
       if ( $results ) {
         foreach ( $results as $result ) {
           $return_object = new $class_name();
-          
+
           $return_object->populate_fields( $result, $return_object );
 
           array_push( $all, $return_object );
         }
       } else {
-        throw new \Exception( "Nothing found on \"$query\".", E_USER_ERROR );
+        return false;
       }
-      
+
       return $all;
     }
 
@@ -175,15 +175,15 @@ namespace WpMvc
       foreach ( $post as $post_key => $post_value ) {
         if( is_array( $post_value ) ) {
           $depth++;
-          
+
           if ( isset( $post_value['delete_action'] ) ) {
             $post_value['delete_action'] = true;
           }
-          
+
           array_push( $key_array, $post_key );
-          
+
           $this->iterate_post_keys_and_populate( $post_value, &$key_array, $depth );
-          
+
           array_pop( $key_array );
         } else {
           array_push( $key_array, $post_key );
@@ -191,23 +191,23 @@ namespace WpMvc
           switch ( count( $key_array ) ) {
             case 0:
               echo "1";
-              break; 
+              break;
             case 1:
               echo "2";
-              break; 
+              break;
             case 2:
               echo "3";
-              break; 
+              break;
             case 3:
               $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]} = $post_value;
-              break; 
+              break;
             case 4:
               $this->{$key_array[0]}->{$key_array[1]}->{$key_array[2]}->{$key_array[3]}  = $post_value;
-              break; 
+              break;
             case 4:
-              break; 
+              break;
             case 5:
-              break; 
+              break;
           }
 
           array_pop( $key_array );
@@ -259,9 +259,9 @@ namespace WpMvc
         $this->as_db_array(),
         array(
           $id_column => $id
-        ), 
-        array(), 
-        array() 
+        ),
+        array(),
+        array()
       );
 
       return $id;
