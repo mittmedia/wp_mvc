@@ -5,11 +5,12 @@ namespace WpMvc
   {
     public static function shorten( $string, $limit, $break=" ", $pad="." )
     {
+      $string = strip_tags ( $string );
       if(strlen($string) <= $limit) return $string;
 
       $string = substr($string, 0, $limit);
 
-      if(false !== ($breakpoint = strrpos($string, $break))) {
+      if(($breakpoint = strrpos($string, $break)) !== false ) {
         $string = substr($string, 0, $breakpoint);
       }
 
