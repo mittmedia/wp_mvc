@@ -3,7 +3,7 @@ namespace WpMvc
 {
   class TextHelper
   {
-    public static function shorten( $string, $limit, $break=" ", $pad="..." )
+    public static function shorten( $string, $limit, $break=" ", $pad="." )
     {
       if(strlen($string) <= $limit) return $string;
 
