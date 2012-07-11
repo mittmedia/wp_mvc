@@ -7,6 +7,7 @@ require_once( 'wp_mvc/helpers/dev_helper.php' );
 require_once( 'wp_mvc/helpers/form_helper.php' );
 require_once( 'wp_mvc/helpers/view_helper.php' );
 require_once( 'wp_mvc/helpers/image_helper.php' );
+require_once( 'wp_mvc/helpers/text_helper.php' );
 
 require_once( 'wp_mvc/models/base_model.php' );
 require_once( 'wp_mvc/models/blog.php' );
