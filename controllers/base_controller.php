@@ -22,7 +22,6 @@ namespace WpMvc
       $full_path = $this->application_path . '/views/' . $controller_dir . '/' . $action_file;
 
       include( $full_path );
-      exit();
     }
 
     public static function redirect_to( $url )
