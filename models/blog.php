@@ -15,7 +15,8 @@ namespace WpMvc
       $options = Option::find_by_blog_id( $this->{static::$id_column} );
 
       foreach ( $options as $option ) {
-        $this->options->{$option->option_name} = $option;
+        if ($option->option_name)
+          $this->options->{$option->option_name} = $option;
       }
     }
 
