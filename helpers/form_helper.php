@@ -4,12 +4,17 @@ namespace WpMvc
 {
   class FormHelper
   {
-    public static function render_form( $object, $content, $action = null, $verb = 'create' )
+    public static function render_form( $object, $content, $default_actions = true, $action = null, $verb = 'create' )
     {
       if ( $action == null )
         $action = $_SERVER['REQUEST_URI'];
 
-      $html = "<form action='$action' method='post' enctype='multipart/form-data'>";
+      $html = '';
+
+      if ($default_actions) {
+        $html .= "<form action='$action' method='post' enctype='multipart/form-data'>";
+      }
+
       $html .= "<table class='form-table'>";
       $html .= "<tbody>";
 
@@ -72,8 +77,12 @@ namespace WpMvc
 
       $html .= "</tbody>";
       $html .= "</table>";
-      $html .= static::default_actions( $verb );
-      $html .= "</form>";
+
+      if ($default_actions) {
+        $html .= static::default_actions( $verb );
+
+        $html .= "</form>";
+      }
 
       echo $html;
     }
@@ -218,9 +227,14 @@ namespace WpMvc
       return $html;
     }
 
-    public static function default_actions()
+    public static function default_actions($verb)
     {
-      return "<p class='submit'><input type='submit' name='submit' id='submit' class='button-primary' value='" . __( 'Save Changes' ) . "'></p>";
+      switch ($verb) {
+        case 'create':
+          return "<p class='submit'><input type='submit' name='submit' id='submit' class='button-primary' value='" . __( 'Save Changes' ) . "'></p>";
+        case 'upload':
+          return "<p class='submit'><input type='submit' name='submit' id='submit' class='button-primary' value='" . __( 'Upload' ) . "'></p>";
+      }
     }
 
     private static function get_attribute_name( $name, $class_name, $key = null )
