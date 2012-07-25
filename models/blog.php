@@ -8,7 +8,7 @@ namespace WpMvc
     public static $class_name = '\WpMvc\Blog';
     public static $id_column = 'blog_id';
     public static $name_column = 'path';
-    public $options;
+    public $option;
 
     public function init_relations()
     {
@@ -16,7 +16,7 @@ namespace WpMvc
 
       foreach ( $options as $option ) {
         if ($option->option_name)
-          $this->options->{$option->option_name} = $option;
+          $this->option->{$option->option_name} = $option;
       }
     }
 
