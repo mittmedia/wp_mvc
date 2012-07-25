@@ -7,10 +7,8 @@ namespace WpMvc
     public static function render_partial( $path )
     {
       $partial_path_splitted = explode( '/', $path );
-      $partial_name = '_' . array_pop( $partial_path_splitted ) . '.html.php';
-      $partial_path = \WpMvc\Config::$application_path;
-      $partial_path .= '/views/';
-      $partial_path .= implode( '/', $partial_path_splitted );
+      $partial_name  = '_' . array_pop( $partial_path_splitted ) . '.html.php';
+      $partial_path  = implode( '/', $partial_path_splitted );
       $partial_path .= '/';
       $partial_path .= $partial_name;
 
