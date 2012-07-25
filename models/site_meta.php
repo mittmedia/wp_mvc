@@ -29,5 +29,14 @@ namespace WpMvc
 
       return self::query( $query );
     }
+
+    public static function find_highlighted_blogs()
+    {
+      $table_name = static::$table_name;
+
+      $query = "SELECT * FROM $table_name WHERE meta_key LIKE '%blog_highlight_%' ORDER BY meta_key DESC;";
+
+      return self::query( $query );
+    }
   }
 }
