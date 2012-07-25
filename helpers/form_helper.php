@@ -234,6 +234,8 @@ namespace WpMvc
           return "<p class='submit'><input type='submit' name='submit' id='submit' class='button-primary' value='" . __( 'Save Changes' ) . "'></p>";
         case 'upload':
           return "<p class='submit'><input type='submit' name='submit' id='submit' class='button-primary' value='" . __( 'Upload' ) . "'></p>";
+        case 'yes':
+          return "<p class='submit'><input type='submit' name='submit' id='submit' class='button-primary' value='" . __( 'Yes' ) . "'></p>";
       }
     }
 
