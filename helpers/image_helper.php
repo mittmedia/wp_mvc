@@ -19,6 +19,8 @@ namespace WpMvc
       if ( ( $imageheight > $fixed_height ) && ( $imagetype == "image/x-png" || $imagetype == "image/png" ) ) {
         $scale =  $fixed_height / $imageheight;
         $new_image = imagecreatetruecolor( floor( $imagewidth * $scale ), $fixed_height);
+        imagealphablending( $new_image, false );
+        imagesavealpha( $new_image, true );
         $source = imagecreatefrompng( $image );
         imagecopyresampled( $new_image, $source, 0, 0, 0, 0, $imagewidth * $scale, $fixed_height, $imagewidth, $imageheight );
 
