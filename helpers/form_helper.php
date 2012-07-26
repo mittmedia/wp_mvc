@@ -36,7 +36,7 @@ namespace WpMvc
 
         isset( $value['type'] ) ? $type = $value['type'] : $type = null;
 
-        isset( $value['default_value'] ) ? $default_value = $value['default_value'] : $default_value = null;
+        isset( $value['default_value'] ) ? $default_value = stripslashes($value['default_value']) : $default_value = null;
 
         isset( $value['description'] ) ? $description = $value['description'] : $description = null;
 
