@@ -110,5 +110,14 @@ namespace WpMvc
 
       return $hash;
     }
+
+    public static function current_blogname( $prepend = "", $append = "" )
+    {
+      $wpurl = explode('/', get_bloginfo('wpurl'));
+      $blog_name = "";
+      if (count($wpurl) > 3)
+        $blog_name = $prepend . $wpurl[3] . $append;
+      return $blog_name;
+    }
   }
 }

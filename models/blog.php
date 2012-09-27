@@ -31,6 +31,35 @@ namespace WpMvc
       return self::query( $query );
     }
 
+    public static function find_public($id)
+    {
+      global $wpdb;
+
+      $table_name = static::$table_name;
+
+      $query = "SELECT * FROM $table_name WHERE blog_id = $id AND public = 1 ORDER BY blog_id;";
+
+      return self::query( $query );
+    }
+
+    public static function find_public_recently_updated($num = 20)
+    {
+      $table_name = static::$table_name;
+
+      $query = "SELECT * FROM $table_name WHERE public = 1 ORDER BY last_updated DESC LIMIT $num;";
+
+      return self::query( $query );
+    }
+
+    public static function find_public_recently_created($num = 20)
+    {
+      $table_name = static::$table_name;
+
+      $query = "SELECT * FROM $table_name WHERE public = 1 ORDER BY registered DESC LIMIT $num;";
+
+      return self::query( $query );
+    }
+
     public static function find_recently_updated($num = 20)
     {
       $table_name = static::$table_name;
