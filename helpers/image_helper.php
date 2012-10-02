@@ -26,6 +26,7 @@ namespace WpMvc
 
         if ( $options["save_image"] == true ) {
           imagepng( $new_image, $image_path . $new_filename );
+          chmod($image_path . $new_filename, 0777);
         } else {
           return $new_image;
         }
@@ -87,7 +88,7 @@ namespace WpMvc
           break;
       }
 
-      chmod($path, 0755);
+      chmod($path, 0777);
     }
 
     public static function crop($path, $full_image_path, $x1, $y1, $width, $height, $scale)
@@ -129,7 +130,7 @@ namespace WpMvc
           break;
       }
 
-      chmod($path, 0755);
+      chmod($path, 0777);
     }
   }
 }
