@@ -39,6 +39,14 @@ task :stage do
   after "deploy:restart", "deploy:cleanup"
 end
 
+desc "Use production environment"
+task :stage do
+  server "mim-mysql01.sth.basefarm.net", :app, :web, :db, :primary => true
+
+  # Remove all but the 5 latest releases
+  after "deploy:restart", "deploy:cleanup"
+end
+
 #desc "Use production environment"
 #task :production do
 #  set :rails_env, "production"
