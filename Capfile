@@ -24,10 +24,10 @@ set :deploy_to, "/www/mittmedia/deploy/#{application}"
 set :scm, :git
 set :scm_username, "git"
 set :branch, "master"
-set :local_repository, "https://github.com/mittmedia/wp_mvc.git"
+set :local_repository, "git@github.com:mittmedia/wp_mvc.git"
 # a.github.com is needed since GitHub needs different SSH keys per
 # application. See config in ~/.ssh/config on target environment.
-set :repository, "https://github.com/mittmedia/wp_mvc.git"
+set :repository, "git@c.github.com:mittmedia/wp_mvc.git"
 set :deploy_via, :remote_cache
 
 # TASKS
