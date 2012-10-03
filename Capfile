@@ -40,7 +40,7 @@ task :stage do
 end
 
 desc "Use production environment"
-task :stage do
+task :production do
   server "mim-mysql01.sth.basefarm.net", :app, :web, :db, :primary => true
 
   # Remove all but the 5 latest releases
