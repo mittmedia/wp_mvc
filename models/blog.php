@@ -20,6 +20,32 @@ namespace WpMvc
       }
     }
 
+    public static function all_public( $get_relations = true )
+    {
+      global $wpdb;
+
+      $table_name = static::$table_name;
+      $class_name = static::$class_name;
+
+      $results = $wpdb->get_results( "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0;" );
+
+      $all = array();
+
+      foreach ( $results as $result ) {
+        $return_object = new $class_name();
+
+        $return_object->populate_fields( $result, $return_object );
+
+        if ( $get_relations ) {
+          $return_object->init_class_relations();
+        }
+
+        array_push( $all, $return_object );
+      }
+
+      return $all;
+    }
+
     public static function find_by_path($path)
     {
       global $wpdb;
@@ -27,6 +53,17 @@ namespace WpMvc
       $table_name = static::$table_name;
 
       $query = "SELECT * FROM $table_name WHERE path = '$path' ORDER BY blog_id;";
+
+      return self::query( $query );
+    }
+
+    public static function find_public_by_path($path)
+    {
+      global $wpdb;
+
+      $table_name = static::$table_name;
+
+      $query = "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 AND path = '$path' ORDER BY blog_id;";
 
       return self::query( $query );
     }
