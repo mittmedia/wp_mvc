@@ -254,7 +254,7 @@ namespace WpMvc
       }
     }
 
-    private function init_class_relations()
+    public function init_class_relations()
     {
       if ( method_exists( $this, 'init_relations' ) )
         $this->init_relations();
