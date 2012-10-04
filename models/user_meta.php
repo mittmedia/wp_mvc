@@ -18,5 +18,16 @@ namespace WpMvc
 
       return self::query( $query );
     }
+
+    public static function find_capabilities_by_blog_id( $blog_id )
+    {
+      global $wpdb;
+
+      $table_name = static::$table_name;
+
+      $query = "SELECT * FROM $table_name WHERE meta_key = 'wp_{$blog_id}_capabilities;";
+
+      return self::query( $query );
+    }
   }
 }
