@@ -25,7 +25,7 @@ namespace WpMvc
 
       $table_name = static::$table_name;
 
-      $query = "SELECT * FROM $table_name WHERE meta_key = 'wp_{$blog_id}_capabilities;";
+      $query = "SELECT * FROM $table_name WHERE meta_key = 'wp_{$blog_id}_capabilities';";
 
       return self::query( $query );
     }
