@@ -37,7 +37,7 @@ namespace WpMvc
 
       $table_name = static::$table_name;
 
-      $query = "SELECT * FROM $table_name WHERE blog_id = $id AND public = 1 ORDER BY blog_id;";
+      $query = "SELECT * FROM $table_name WHERE blog_id = $id AND public = 1 AND deleted = 0 ORDER BY blog_id;";
 
       return self::query( $query );
     }
@@ -46,7 +46,7 @@ namespace WpMvc
     {
       $table_name = static::$table_name;
 
-      $query = "SELECT * FROM $table_name WHERE public = 1 ORDER BY last_updated DESC LIMIT $num;";
+      $query = "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 ORDER BY last_updated DESC LIMIT $num;";
 
       return self::query( $query );
     }
@@ -55,7 +55,7 @@ namespace WpMvc
     {
       $table_name = static::$table_name;
 
-      $query = "SELECT * FROM $table_name WHERE public = 1 ORDER BY registered DESC LIMIT $num;";
+      $query = "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 ORDER BY registered DESC LIMIT $num;";
 
       return self::query( $query );
     }
