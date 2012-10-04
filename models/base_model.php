@@ -40,7 +40,6 @@ namespace WpMvc
       return $all;
     }
 
-
     public static function find_by_name( $name, $get_relations = true )
     {
       global $wpdb;

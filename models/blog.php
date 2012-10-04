@@ -46,6 +46,31 @@ namespace WpMvc
       return $all;
     }
 
+    public static function find_public_by_name( $name, $get_relations = true )
+    {
+      global $wpdb;
+
+      $table_name = static::$table_name;
+      $name_column = static::$name_column;
+      $class_name = static::$class_name;
+
+      $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 AND $name_column = %s LIMIT 1;", $name ) );
+
+      $return_object = new $class_name();
+
+      if ( $results ) {
+        $return_object->populate_fields( $results[0], $return_object );
+      } else {
+        throw new \Exception( "Couldn't find $id_column $id of $class_name in $table_name.", E_USER_ERROR );
+      }
+
+      if ( $get_relations ) {
+        $return_object->init_class_relations();
+      }
+
+      return $return_object;
+    }
+
     public static function find_by_path($path)
     {
       global $wpdb;
