@@ -289,6 +289,8 @@ namespace WpMvc
       global $wpdb;
 
       $table_name = static::$table_name;
+      if (isset($this->__db_table))
+        $table_name = $this->__db_table;
 
       $wpdb->insert( $table_name, $this->as_db_array(), array() );
 
