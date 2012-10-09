@@ -19,6 +19,7 @@ namespace WpMvc
       $meta = SiteMeta::find_by_site_id( $this->{static::$id_column} );
 
       foreach ( $meta as $meta_item ) {
+        $meta_item->source_object = clone $meta_item;
         $this->sitemeta->{$meta_item->meta_key} = $meta_item;
       }
     }

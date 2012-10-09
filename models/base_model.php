@@ -14,11 +14,13 @@ namespace WpMvc
       $this->populate();
     }
 
-    public static function all( $get_relations = true )
+    public static function all($get_relations = true, $table_name = "")
     {
       global $wpdb;
 
-      $table_name = static::$table_name;
+      if ($table_name == "")
+        $table_name = static::$table_name;
+
       $class_name = static::$class_name;
 
       $results = $wpdb->get_results( "SELECT * FROM $table_name;" );
@@ -34,17 +36,22 @@ namespace WpMvc
           $return_object->init_class_relations();
         }
 
+        $return_object->source_object = clone $return_object;
+        $return_object->__db_table = $table_name;
+
         array_push( $all, $return_object );
       }
 
       return $all;
     }
 
-    public static function find_by_name( $name, $get_relations = true )
+    public static function find_by_name($name, $get_relations = true, $table_name = "")
     {
       global $wpdb;
 
-      $table_name = static::$table_name;
+      if ($table_name == "")
+        $table_name = static::$table_name;
+
       $name_column = static::$name_column;
       $class_name = static::$class_name;
 
@@ -62,14 +69,19 @@ namespace WpMvc
         $return_object->init_class_relations();
       }
 
+      $return_object->source_object = clone $return_object;
+      $return_object->__db_table = $table_name;
+
       return $return_object;
     }
 
-    public static function find( $id, $get_relations = true )
+    public static function find($id, $get_relations = true, $table_name = "")
     {
       global $wpdb;
 
-      $table_name = static::$table_name;
+      if ($table_name == "")
+        $table_name = static::$table_name;
+
       $id_column = static::$id_column;
       $class_name = static::$class_name;
 
@@ -87,12 +99,18 @@ namespace WpMvc
         $return_object->init_class_relations();
       }
 
+      $return_object->source_object = clone $return_object;
+      $return_object->__db_table = $table_name;
+
       return $return_object;
     }
 
-    public static function query( $query )
+    public static function query($query, $table_name = "")
     {
       global $wpdb;
+
+      if ($table_name == "")
+        $table_name = static::$table_name;
 
       $class_name = static::$class_name;
 
@@ -105,6 +123,9 @@ namespace WpMvc
           $return_object = new $class_name();
 
           $return_object->populate_fields( $result, $return_object );
+
+          $return_object->source_object = clone $return_object;
+          $return_object->__db_table = $table_name;
 
           array_push( $all, $return_object );
         }
@@ -120,6 +141,9 @@ namespace WpMvc
       $class_name = static::$class_name;
 
       $return_object = new $class_name();
+
+      $return_object->source_object = clone $return_object;
+      $return_object->__db_table = $table_name;
 
       return $return_object;
     }
@@ -276,20 +300,26 @@ namespace WpMvc
       global $wpdb;
 
       $table_name = static::$table_name;
+      if (isset($this->__db_table))
+        $table_name = $this->__db_table;
       $id_column = static::$id_column;
       $id = $this->{static::$id_column};
 
-      $wpdb->update(
-        $table_name,
-        $this->as_db_array(),
-        array(
-          $id_column => $id
-        ),
-        array(),
-        array()
-      );
+      $columns_array = $this->as_db_array();
 
-      return $id;
+      if (is_array($columns_array) && count($columns_array) > 0) {
+        $result = $wpdb->update(
+          $table_name,
+          $columns_array,
+          array(
+            $id_column => $id
+          )
+        );
+
+        return $id;
+      } else {
+        return false;
+      }
     }
 
     private function as_db_array()
@@ -297,9 +327,16 @@ namespace WpMvc
       $return_array = array();
 
       foreach ( $this->db_columns as $db_column ) {
-        if ( $this->{$db_column->Field} || $this->{$db_column->Field} == 0 ) {
-          $return_array[$db_column->Field] = $this->{$db_column->Field};
+        if (!isset($this->source_object->{$db_column->Field})) {
+          continue;
         }
+
+        if ($this->{$db_column->Field} == $this->source_object->{$db_column->Field}) {
+          continue;
+        }
+
+        if ($this->{$db_column->Field} || $this->{$db_column->Field} == 0)
+          $return_array[$db_column->Field] = $this->{$db_column->Field};
       }
 
       return $return_array;
