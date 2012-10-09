@@ -35,5 +35,22 @@ namespace WpMvc
 
       return self::query($query, $table_name);
     }
+
+    public static function virgin($blog_id = 1)
+    {
+      $table_name = static::$table_name;
+
+      if ( $blog_id != 1 )
+        $table_name = "wp_{$blog_id}_options";
+
+      $class_name = static::$class_name;
+
+      $return_object = new $class_name();
+
+      $return_object->source_object = clone $return_object;
+      $return_object->__db_table = $table_name;
+
+      return $return_object;
+    }
   }
 }
