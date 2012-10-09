@@ -136,8 +136,11 @@ namespace WpMvc
       return $all;
     }
 
-    public static function virgin()
+    public static function virgin($table_name = "")
     {
+      if ($table_name == "")
+        $table_name = static::$table_name;
+
       $class_name = static::$class_name;
 
       $return_object = new $class_name();
