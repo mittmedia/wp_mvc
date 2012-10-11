@@ -105,7 +105,7 @@ namespace WpMvc
       return $return_object;
     }
 
-    public static function query($query, $table_name = "")
+    public static function query($query, $get_relations = true, $table_name = "")
     {
       global $wpdb;
 
@@ -123,6 +123,10 @@ namespace WpMvc
           $return_object = new $class_name();
 
           $return_object->populate_fields( $result, $return_object );
+
+          if ( $get_relations ) {
+            $return_object->init_class_relations();
+          }
 
           $return_object->source_object = clone $return_object;
           $return_object->__db_table = $table_name;

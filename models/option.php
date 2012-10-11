@@ -19,7 +19,7 @@ namespace WpMvc
 
       $query = "SELECT * FROM $table_name;";
 
-      return self::query($query, $table_name);
+      return self::query($query, false, $table_name);
     }
 
     public static function find_by_blog_id_and_option_name($blog_id, $option_name)
@@ -33,7 +33,7 @@ namespace WpMvc
 
       $query = "SELECT * FROM $table_name WHERE option_name = '{$option_name}';";
 
-      return self::query($query, $table_name);
+      return self::query($query, false, $table_name);
     }
 
     public static function virgin($blog_id = 1)

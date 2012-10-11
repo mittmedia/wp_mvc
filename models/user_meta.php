@@ -16,7 +16,7 @@ namespace WpMvc
 
       $query = "SELECT * FROM $table_name WHERE user_id = $user_id;";
 
-      return self::query( $query );
+      return self::query( $query, false );
     }
 
     public static function find_capabilities_by_blog_id( $blog_id )
@@ -27,7 +27,7 @@ namespace WpMvc
 
       $query = "SELECT * FROM $table_name WHERE meta_key = 'wp_{$blog_id}_capabilities';";
 
-      return self::query( $query );
+      return self::query( $query, false );
     }
   }
 }

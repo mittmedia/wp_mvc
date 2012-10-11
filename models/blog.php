@@ -71,7 +71,7 @@ namespace WpMvc
       return $return_object;
     }
 
-    public static function find_by_path($path)
+    public static function find_by_path($path, $get_relations = true)
     {
       global $wpdb;
 
@@ -79,10 +79,10 @@ namespace WpMvc
 
       $query = "SELECT * FROM $table_name WHERE path = '$path' ORDER BY blog_id;";
 
-      return self::query( $query );
+      return self::query( $query, $get_relations );
     }
 
-    public static function find_public_by_path($path)
+    public static function find_public_by_path($path, $get_relations = true)
     {
       global $wpdb;
 
@@ -90,10 +90,10 @@ namespace WpMvc
 
       $query = "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 AND path = '$path' ORDER BY blog_id;";
 
-      return self::query( $query );
+      return self::query( $query, $get_relations );
     }
 
-    public static function find_public($id)
+    public static function find_public($id, $get_relations = true)
     {
       global $wpdb;
 
@@ -101,43 +101,43 @@ namespace WpMvc
 
       $query = "SELECT * FROM $table_name WHERE blog_id = $id AND public = 1 AND deleted = 0 ORDER BY blog_id;";
 
-      return self::query( $query );
+      return self::query( $query, $get_relations );
     }
 
-    public static function find_public_recently_updated($num = 20)
+    public static function find_public_recently_updated($get_relations = true, $num = 20)
     {
       $table_name = static::$table_name;
 
       $query = "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 AND blog_id != 1 ORDER BY last_updated DESC LIMIT $num;";
 
-      return self::query( $query );
+      return self::query( $query, $get_relations );
     }
 
-    public static function find_public_recently_created($num = 20)
+    public static function find_public_recently_created($get_relations = true, $num = 20)
     {
       $table_name = static::$table_name;
 
       $query = "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 AND blog_id != 1 ORDER BY registered DESC LIMIT $num;";
 
-      return self::query( $query );
+      return self::query( $query, $get_relations );
     }
 
-    public static function find_recently_updated($num = 20)
+    public static function find_recently_updated($get_relations = true, $num = 20)
     {
       $table_name = static::$table_name;
 
       $query = "SELECT * FROM $table_name WHERE blog_id != 1 ORDER BY last_updated DESC LIMIT $num;";
 
-      return self::query( $query );
+      return self::query( $query, $get_relations );
     }
 
-    public static function find_recently_created($num = 20)
+    public static function find_recently_created($get_relations = true, $num = 20)
     {
       $table_name = static::$table_name;
 
       $query = "SELECT * FROM $table_name WHERE blog_id != 1 ORDER BY registered DESC LIMIT $num;";
 
-      return self::query( $query );
+      return self::query( $query, $get_relations );
     }
   }
 }
