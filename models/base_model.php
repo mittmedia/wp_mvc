@@ -332,11 +332,13 @@ namespace WpMvc
       $return_array = array();
 
       foreach ( $this->db_columns as $db_column ) {
-        if (!isset($this->source_object->{$db_column->Field})) {
+        $backtrace = debug_backtrace();
+
+        if ($backtrace[1]["function"] != "create" && !isset($this->source_object->{$db_column->Field})) {
           continue;
         }
 
-        if ($this->{$db_column->Field} == $this->source_object->{$db_column->Field}) {
+        if ($backtrace[1]["function"] != "create" && $this->{$db_column->Field} == $this->source_object->{$db_column->Field}) {
           continue;
         }
 
