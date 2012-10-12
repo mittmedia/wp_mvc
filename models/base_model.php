@@ -299,7 +299,9 @@ namespace WpMvc
       if (isset($this->__db_table))
         $table_name = $this->__db_table;
 
-      $result = $wpdb->insert( $table_name, $this->as_db_array(), array() );
+      \WpMvc\DevHelper::dump($this->as_db_array());
+
+      $result = $wpdb->insert( $table_name, $this->as_db_array() );
 
       \WpMvc\DevHelper::dump($result);
 
