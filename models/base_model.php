@@ -342,8 +342,6 @@ namespace WpMvc
       foreach ( $this->db_columns as $db_column ) {
         $backtrace = debug_backtrace();
 
-        var_dump($backtrace[1]["function"]);
-
         if ($backtrace[1]["function"] != "create" && !isset($this->source_object->{$db_column->Field})) {
           continue;
         }
