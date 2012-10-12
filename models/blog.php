@@ -15,6 +15,9 @@ namespace WpMvc
       $options = Option::find_by_blog_id( $this->{static::$id_column} );
 
       foreach ( $options as $option ) {
+        if (!$option->option_name)
+          continue;
+
         $option->source_object = clone $option;
         $this->option->{$option->option_name} = $option;
       }
