@@ -299,7 +299,9 @@ namespace WpMvc
       if (isset($this->__db_table))
         $table_name = $this->__db_table;
 
-      $wpdb->insert( $table_name, $this->as_db_array(), array() );
+      $result = $wpdb->insert( $table_name, $this->as_db_array(), array() );
+
+      \WpMvc\DevHelper::dump($result);
 
       return $wpdb->insert_id;
     }
@@ -337,6 +339,8 @@ namespace WpMvc
 
       foreach ( $this->db_columns as $db_column ) {
         $backtrace = debug_backtrace();
+
+        var_dump($backtrace[1]["function"]);
 
         if ($backtrace[1]["function"] != "create" && !isset($this->source_object->{$db_column->Field})) {
           continue;
