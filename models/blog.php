@@ -23,14 +23,21 @@ namespace WpMvc
       }
     }
 
-    public static function all_public( $get_relations = true )
+    public static function all_public( $get_relations = true, $order = null, $limit = null )
     {
       global $wpdb;
 
       $table_name = static::$table_name;
       $class_name = static::$class_name;
 
-      $results = $wpdb->get_results( "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 AND blog_id != 1;" );
+      if ($order && $limit)
+        $results = $wpdb->get_results( "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 AND blog_id != 1 ORDER BY $order LIMIT $limit;" );
+      elseif ($order)
+        $results = $wpdb->get_results( "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 AND blog_id != 1 ORDER BY $order;" );
+      elseif ($limit)
+        $results = $wpdb->get_results( "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 AND blog_id != 1 LIMIT $limit;" );
+      else
+        $results = $wpdb->get_results( "SELECT * FROM $table_name WHERE public = 1 AND deleted = 0 AND blog_id != 1;" );
 
       $all = array();
 
