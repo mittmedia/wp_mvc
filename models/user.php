@@ -19,6 +19,9 @@ namespace WpMvc
       $meta = UserMeta::find_by_user_id( $this->{static::$id_column} );
 
       foreach ( $meta as $meta_item ) {
+        if (!$meta_item->meta_key)
+          continue;
+
         $meta_item->source_object = clone $meta_item;
         $this->usermeta->{$meta_item->meta_key} = $meta_item;
       }
