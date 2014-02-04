@@ -1,0 +1,9 @@
+# Logfile created on 2014-02-04 14:59:48 +0100 by logger.rb/36483
+I, [2014-02-04T14:59:48.833914 #78028]  INFO -- : 0:  highline (1.6.20) from /Users/fredrik/.rvm/gems/ruby-2.1.0@wp_mvc/specifications/highline-1.6.20.gemspec
+I, [2014-02-04T14:59:52.373399 #78028]  INFO -- : 0:  net-ssh (2.8.0) from /Users/fredrik/.rvm/gems/ruby-2.1.0@wp_mvc/specifications/net-ssh-2.8.0.gemspec
+I, [2014-02-04T14:59:54.121725 #78028]  INFO -- : 0:  net-scp (1.1.2) from /Users/fredrik/.rvm/gems/ruby-2.1.0@wp_mvc/specifications/net-scp-1.1.2.gemspec
+I, [2014-02-04T14:59:55.572163 #78028]  INFO -- : 0:  net-sftp (2.1.2) from /Users/fredrik/.rvm/gems/ruby-2.1.0@wp_mvc/specifications/net-sftp-2.1.2.gemspec
+I, [2014-02-04T14:59:57.660896 #78028]  INFO -- : 0:  net-ssh-gateway (1.2.0) from /Users/fredrik/.rvm/gems/ruby-2.1.0@wp_mvc/specifications/net-ssh-gateway-1.2.0.gemspec
+I, [2014-02-04T14:59:59.333775 #78028]  INFO -- : 0:  capistrano (2.15.5) from /Users/fredrik/.rvm/gems/ruby-2.1.0@wp_mvc/specifications/capistrano-2.15.5.gemspec
+I, [2014-02-04T15:00:00.562446 #78028]  INFO -- : 0:  rvm-capistrano (1.5.1) from /Users/fredrik/.rvm/gems/ruby-2.1.0@wp_mvc/specifications/rvm-capistrano-1.5.1.gemspec
+I, [2014-02-04T15:00:00.562821 #78028]  INFO -- : 0:  bundler (1.5.1) from /Users/fredrik/.rvm/gems/ruby-2.1.0@global/specifications/bundler-1.5.1.gemspec
