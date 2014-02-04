@@ -238,7 +238,7 @@ namespace WpMvc
 
           array_push( $key_array, $post_key );
 
-          $this->iterate_post_keys_and_populate( $post_value, &$key_array, $depth );
+          $this->iterate_post_keys_and_populate( $post_value, $key_array, $depth );
 
           array_pop( $key_array );
         } else {
